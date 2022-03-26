@@ -6,13 +6,16 @@
 \usepackage[spanish]{babel}
 \usepackage{graphicx}							% paquete para poder usra graficos
 \usepackage{float}								% paquete para poder usar \begin {figure}[H]
+\usepackage[hyphens]{url}					% https://stackoverflow.com/questions/4146606/wrap-url-ignores-margin-in-bibtex-using-pdflatex
 \usepackage{hyperref}							% paquete para hacer hyperreferencias a links
 \usepackage{fancyhdr}							% paquete para poner cosas en footer y header
 \usepackage{wrapfig}							% paquete para hacer wrapfigure
 \usepackage{titling}							% paquete para modificar el espaciado de los titulos
 \usepackage{titlesec}							% paquete para modificar como se ven los titulos
 \usepackage{minted}								% paquete para agregar codigo al documento
-\usepackage[smartEllipses]{markdown}							% paquete para poder usar markdown para incluir las bitacoras
+\usepackage[margin=1in]{geometry} % paquete para meter un margen de una pulgada
+\usepackage{todonotes}
+
 
 
 % ------------------------------------------------------- %
@@ -21,7 +24,6 @@
 
 \setlength{\headheight}{12pt} %esto era para evitar un error de hbox
 \graphicspath{{images/}}
-
 % ----------------- Configuracion de hyperref ----------- %
 \hypersetup{								
 	colorlinks=true,
@@ -144,12 +146,55 @@ Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa págin
 %\includegraphics[width=0.9\textwidth]{../../database_schema.png}
 
 \section{Codigo del programa}
-%\inputminted %TODO: ponerle inconsolata
-%[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
-%	label=Codigo principal]
-%{cpp}{../src/main.cpp}
+\inputminted %TODO: ponerle inconsolata
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Codigo principal]
+{cpp}{../src/main.cpp}
 
 \section{Bitacoras Personales}
+\subsection{Krapp Ramiro}
+\subsubsection{24/03/2022}
+\begin{itemize}
+	\item Comence creando un repositorio en github para subir todos los cambios del proyecto
+	\item Cree un codigo en C++, para definir un sistema de clases.
+	      La idea es hacer una clase Tren, para que sirva de blueprint para todos los trenes,
+	      y una clase Persona, para que sea padre de otras dos clases, Maquinista y Pasajero.
+	      Al pasajero le voy a asignar una sube, y al maquinista le voy a asignar
+	      un salario y un seniority
+\end{itemize}
+\subsubsection{25/03/2022}
+\todo{Hacer las urls mas chicas con \small o tiny}
+\begin{itemize}
+	\item Pienso implementar la sube con un sistema usando RFID\\
+	      \small{\url{https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/}}
+	\item La idea seria armar un sistema en el que cada usuario pueda tener un llavero
+	      RFID, y que asigne ese llavero RFID con una cuenta.
+	      Tambien necesito comprar los lectores para RFID.
+	      En total, tengo pensado comprar 2 lectores y 4 llaveros RFID.
+	      Por qué 2 lectores? Estaba pensando en asignar cada uno a una estación distinta.
+	      Por qué 4 llaveros? Estaba pensando en asignar cada uno a un pasajero distinto.
+	\item Encontre que para en \LaTeX \ dejar de tener problema con las url yendose fuera
+	      pantalla, puedo usar el paquete url con la opcion [hyphens], lo
+	      unico es que hay que cargar este paquete antes de hyperref.
+	      Esto es porque por defecto el paquete hyperref ya carga al paquete url
+	      \url{https://tex.stackexchange.com/questions/544671/option-clash-for-package-url-urlstyle}
 
-% \markdownInput{../bitacoras/bitacora_krapp.md}
+\end{itemize}
+\subsubsection{26/03/2022}
+\begin{itemize}
+	\item Encontre mucha documentacion del ESP32 y de proyectos con el RFID, la principal es esta:
+	\item \url{https://arduinogetstarted.com/tutorials/arduino-rfid-nfc}
+	\item \url{https://olddocs.zerynth.com/latest/official/board.zerynth.doit_esp32/docs/index.html}
+	\item \url{https://testzdoc.zerynth.com/reference/boards/doit_esp32/docs/}
+	\item \url{https://randomnerdtutorials.com/esp32-pinout-reference-gpios/}
+	\item \url{https://randomnerdtutorials.com/getting-started-with-esp32/}
+	\item Voy a usar el grafico de randomnerdtutorials, del link de getting-started...,
+	      el que incluye que pines son GPIO, me va a servir un montón.
+	      Para cuando quiera programar, solamente tengo que recordar que lo mejor es usar los
+	      GPIO del 13 al 33, y que mi DOIT ESP32 DevKit V1 es la version de 30 pines
+	\item Decidi seguir el tutorial de este link \url{https://www.instructables.com/ESP32-With-RFID-Access-Control/}
+
+\end{itemize}
+
+
 \end{document}

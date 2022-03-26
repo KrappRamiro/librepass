@@ -1,3 +1,8 @@
+/*
+TODO Hacer el registro de viajes de cada pasajero
+
+*/
+
 #include <Arduino.h>
 #include <iostream>
 #include <vector>
@@ -31,13 +36,29 @@ public:
 		this->serialNumber = serialNumber;
 		this->trainType = trainType;
 	}
-	int getTrainStatus()
+	// Para los getters tenia dos opciones, o retornaba un struct, o hacia una funcion
+	// para cada variable
+	int getSpeed()
 	{
-		// TODO Funcion que te tire la info del tren que esta en private
+		return speed;
 	}
+	String getSerialNumber()
+	{
+		return serialNumber;
+	}
+	String getCurrentStation()
+	{
+		return currentStation;
+	}
+	String getTrainType()
+	{
+		return trainType;
+	}
+
 	void travelToStation(String stationName)
 	{
-		this->currentStation = stationName;
+		currentStation = stationName;
+		// TODO Hacer algo parecido con la funcion que tenes en Pasajero
 	}
 };
 
@@ -48,6 +69,7 @@ class Persona {
 private:
 	String name;
 	bool isAlive = true;
+	String dni;
 
 public:
 	void kill()
@@ -57,12 +79,16 @@ public:
 };
 
 class Maquinista : public Persona { // clase que hereda de Persona
-public:
 private:
+	String name;
+	float salary;
+	int seniority; // el seniority se piensa con los años de antiguedad
+public:
 };
 
 class Pasajero : public Persona { // clase que hereda de Persona
 private:
+	String nombre;
 	int sube_id;
 	float sube_saldo;
 
@@ -97,13 +123,3 @@ public:
 		*/
 	}
 };
-
-void setup()
-{
-	// put your setup code here, to run once:
-}
-
-void loop()
-{
-	// put your main code here, to run repeatedly:
-}
