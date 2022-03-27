@@ -284,6 +284,12 @@ void setup()
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
 
+	digitalWrite(greenPin, HIGH);
+	digitalWrite(redPin, HIGH);
+	delay(500);
+	digitalWrite(greenPin, LOW);
+	digitalWrite(redPin, LOW);
+
 	// Init MFRC522
 	mfrc522.PCD_Init();
 	Serial.println("Approach your reader card...");
