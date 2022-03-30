@@ -1,12 +1,123 @@
-\documentclass[../main.tex]{subfiles}
+\documentclass[../informe_krapp.tex]{subfiles}
 \begin{document}
 \section{Partes del proyecto}
-\subsection{El protocolo de comunicación XXXXX}
-El protocolo de comunicacion
+\subsection{El protocolo de comunicación SPI}
+\begin{wrapfigure}{r}{0in}
+	\centering
+	\includegraphics[width= 1.5in, keepaspectratio]{spi-1.jpg}
+\end{wrapfigure}
 
-\subsection{DOIT ESP32 DevKit v1}
-El DOIT ESP32 DevKit v1
+El protocolo Serial Peripheral Interface es un protocolo de comunicación creado por
+Motorola, anunciado en el año 1979.
+El mismo se divide en 4 lineas de comunicación, cada una con una función específica
+(por favor, ver figura \ref{spi-single-slave}) con:
 
+\begin{itemize}
+	\item Una señal de clock llamada SCLK, enviada desde el bus master a todos los slaves.
+	      Todas las señales del protocolo van as er sínconas a esta señal de clock
+	\item Una señal de selección de slave llamada SSn, usada para seleccionar con
+	      que slave se esta comunicando el master
+	\item Una linea de datos desde master hacia slave, llamada MOSI (Master Out Slave In)
+	\item Una linea de datos desde slave hacia master, llamada MISO (Master In Slave OUT)
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{spi-single-slave.png}
+	\caption{SPI master conectado a un único slave.}
+	\label{spi-single-slave}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{spi-multiple-slaves.png}
+	\caption{SPI master conectado a múltiples slaves.}
+	\label{spi-multiple-slaves}
+\end{figure}
+
+\todo{no olvidarse de la daisy chained}
+
+\clearpage
+
+\todo{poner las ventajas y desventajas que aparecen en wikipedia}
+
+SPI es un protoclo de comunicación single-master, esto significa que un dispositivo
+central (normalmente un microcontrolador) es el encargado de iniciar todas
+las comunicaciónes con los slaves.
+
+Cuando el master SPI desea enviar o recibir información de un slave, selecciona el
+slave seteando en LOW la linea SS correspondiente, y activa la señal de clock a una
+frecuencia usable por el master y el slave.
+A partir de ese momento, el master envía la información por el canal MOSI mientras lee
+la información que hay en el canal MISO
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spi-timing.png}
+	\caption{El timing de una comunicación SPI. En este ejemplo,
+		La transmisión de datos por los canales MOSI y MISO es ejecutada por
+		cada flanco descendente en la señal de clock en SCLK. En cambio,
+		la lectura de datos es ejecutada por cada flanco ascendente.
+		Esto se puede cambiar modificando el SPI mode }
+	\label{spi-timing}
+\end{figure}
+
+Como se menciona en la figura \ref{spi-timing}, hay 4 modos SPI, que van del 0 al 3.
+Los modos SPI definen en que flanco se activa la linea MOSI, MISO, y el estado (LOW o HIGH)
+de inactividad (idle) del canal SCLK.
+Cada modo esta definido por un par de parámetros llamados clock polarity
+(polaridad de clock) (CPOL), y clock phase (fase de clock) (CPHA)
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spi-modes.png}
+	\caption{Los modos SPI son definidos con los parámetros CPOL (clock polarity) y CPHA
+		(clock phase), que definen 3 parámetros: El flanco usado para envío de datos, el
+		flanco usado para recepción de datos, y el estado de inactividad (idle) de SCLK}
+	\label{spi-modes}
+\end{figure}
+
+Una conexión SPI master/slave tiene que usar el mismo set de parámetros explicados
+en la figura \ref{spi-modes} para poder efectuar una comunicación.
+Si de todas formas se desea que múltiples slaves tengan configuraciones distintas,
+el master deberá reconfigurarse cada vez que se desee comunicar con cada dispositivo.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spi-timing-2.png}
+	\caption{Grafico de comunicacion SPI}
+\end{figure}
+
+\subsubsection{Ventajas y desventajas}
+
+\todo{ventajas y desventajas}
+
+
+
+
+
+
+
+
+
+
+%\subsection{DOIT ESP32 DevKit v1}
+%\begin{wrapfigure}{r}{0in}
+%	\centering
+%	\includegraphics[width= 1.5in, keepaspectratio]{ESP32-board.jpg}
+%\end{wrapfigure}
+%El kit de desarrollo DOIT ESP32 DevKit v1
+%
+%
+%
 \subsection{Sensor RFID}
-El Sensor RFID
+\begin{wrapfigure}{r}{0in}
+	\centering
+	\includegraphics[width= 1.5in, keepaspectratio]{rfid-rc552.jpg}
+\end{wrapfigure}
+An RFID system basically consists of a transceiver with a decoder and an antenna and a transponder. And how it works? These cards have a reel inside them. When you approach them from the reader, they emit a radio signal through the antennas connected to the reader. The energized tag, which is the card, modulates the information stored in its memory and sends that data to the reader. This card then enters the reading field and receives power from the reader to perform the operations. The RFID reader receives the information sent by the tag, decodes and sends the data to the server application
+
+Un sistema RFID (identificación mediante radio-frecuencia) es un sistema que incluye un lector RFID y una tarjeta
+
+
+
 \end{document}

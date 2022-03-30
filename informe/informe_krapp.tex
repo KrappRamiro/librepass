@@ -2,11 +2,11 @@
 
 % ----------------------- PAQUETES ---------------------- %
 % Set the font (output) encodings
-\usepackage[T1]{fontenc}
-\usepackage[spanish]{babel}
-\usepackage{graphicx}							% paquete para poder usra graficos
+\usepackage[T1]{fontenc}					% encoding de la fuente
+\usepackage[spanish]{babel}				% paquete para los acentos en español
+\usepackage{graphicx}							% paquete para poder usar graficos
 \usepackage{float}								% paquete para poder usar \begin {figure}[H]
-\usepackage[hyphens]{url}					% https://stackoverflow.com/questions/4146606/wrap-url-ignores-margin-in-bibtex-using-pdflatex
+\usepackage{xurl}					% https://stackoverflow.com/questions/4146606/wrap-url-ignores-margin-in-bibtex-using-pdflatex
 \usepackage{hyperref}							% paquete para hacer hyperreferencias a links
 \usepackage{fancyhdr}							% paquete para poner cosas en footer y header
 \usepackage{wrapfig}							% paquete para hacer wrapfigure
@@ -16,9 +16,20 @@
 \usepackage[margin=1in]{geometry} % paquete para meter un margen de una pulgada
 \usepackage{todonotes}						% paquete para hacer todos
 \usepackage{subfiles}							% paquete para hacer subfiles
+\usepackage{csquotes}							% lo necesita biblatex
 
 
 % ------------------------------------------------------- %
+
+%------------------- INICIO DE BIBLIOGRAFIA ------------------------- %
+\usepackage[
+	backend=biber,
+	style=numeric,
+]{biblatex}
+\addbibresource{bibliografia.bib}
+\nocite{*} %nocite lo que hace es poner todas las bibliografias de mi archivo .bib, 
+% sin importar si fueron citadas o no en el documento
+%------------------- FIN DE BIBLIOGRAFIA ------------------------- %
 
 % ---------------------- CONFIGURACION ------------------ %
 
@@ -30,7 +41,7 @@
 	%linkcolor=white,		%modo oscuro
 	filecolor=brown,		
 	urlcolor=blue,
-	pdftitle={Proyecto Indoor},
+	pdftitle={Traintorio},
 	}
 % ------------------------------------------------------- %
 
@@ -103,5 +114,10 @@ Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa págin
 \subfile{subfiles/codigo-programa.tex}
 \subfile{subfiles/bitacoras.tex}
 
+% Bibliografia, hace su propia \section 
+{
+	\emergencystretch=1em %esto esta aca para que una de las urls no se vaya de pantalla
+	\printbibliography
+}
 
 \end{document}
