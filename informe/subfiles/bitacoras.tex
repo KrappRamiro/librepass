@@ -1,0 +1,100 @@
+\documentclass[../informe_krapp.tex]{subfiles}
+\begin{document}
+
+\section{Bitacoras Personales}
+\subsection{Krapp Ramiro}
+\subsubsection{24/03/2022}
+\begin{itemize}
+	\item Comence creando un repositorio en github para subir todos los cambios del proyecto
+	\item Cree un codigo en C++, para definir un sistema de clases.
+	      La idea es hacer una clase Tren, para que sirva de blueprint para todos los trenes,
+	      y una clase Persona, para que sea padre de otras dos clases, Maquinista y Pasajero.
+	      Al pasajero le voy a asignar una sube, y al maquinista le voy a asignar
+	      un salario y un seniority.
+\end{itemize}
+\subsubsection{25/03/2022}
+\todo{Hacer las urls mas chicas con \small o tiny}
+\begin{itemize}
+	\item Pienso implementar la sube con un sistema usando RFID\\
+	      \small{\url{https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/}}
+	\item La idea seria armar un sistema en el que cada usuario pueda tener un llavero
+	      RFID, y que asigne ese llavero RFID con una cuenta.
+	      Tambien necesito comprar los lectores para RFID.
+	      En total, tengo pensado comprar 2 lectores y 4 llaveros RFID.
+	      Por qué 2 lectores? Estaba pensando en asignar cada uno a una estación distinta.
+	      Por qué 4 llaveros? Estaba pensando en asignar cada uno a un pasajero distinto.
+	\item Encontre que para en \LaTeX \ dejar de tener problema con las url yendose fuera
+	      pantalla, puedo usar el paquete url con la opcion [hyphens], lo
+	      unico es que hay que cargar este paquete antes de hyperref.
+	      Esto es porque por defecto el paquete hyperref ya carga al paquete url
+	      \url{https://tex.stackexchange.com/questions/544671/option-clash-for-package-url-urlstyle}
+
+\end{itemize}
+\subsubsection{26/03/2022}
+\begin{itemize}
+	\item Encontre mucha documentacion del ESP32 y de proyectos con el RFID, la principal es esta:
+	\item \url{https://arduinogetstarted.com/tutorials/arduino-rfid-nfc}
+	\item \url{https://olddocs.zerynth.com/latest/official/board.zerynth.doit_esp32/docs/index.html}
+	\item \url{https://testzdoc.zerynth.com/reference/boards/doit_esp32/docs/}
+	\item \url{https://randomnerdtutorials.com/esp32-pinout-reference-gpios/}
+	\item \url{https://randomnerdtutorials.com/getting-started-with-esp32/}
+	\item Voy a usar el grafico de randomnerdtutorials, del link de getting-started...,
+	      el que incluye que pines son GPIO, me va a servir un montón.
+	      Para cuando quiera programar, solamente tengo que recordar que lo mejor es usar los
+	      GPIO del 13 al 33, y que mi DOIT ESP32 DevKit V1 es la version de 30 pines
+	\item Decidi seguir el tutorial de este link
+	      \url{https://www.instructables.com/ESP32-With-RFID-Access-Control/}
+	\item Hice andar el codigo durante un tiempo, grabe que funcionaba incluso, pero de
+	      repente dejo de funcionar, solamente me da un error:
+	      PCD\_Authenticate() failed: Timeout in communication.
+	\item Creo que se por qué dejó de funcionar, me parece que cortocircuité algo
+	      con el la parte de metal del llavero, me parece haber cortocircuitado
+	      los pines del sensor RFID-RC552
+
+\end{itemize}
+\subsubsection{27/03/2022}
+\begin{itemize}
+	\item Hice una branch nueva en git para trabajar exclusivamente en el informe,
+	      la llamé update\_informe.
+	      Aproveché para eliminar la sección Base de Datos, que me había quedado ahí
+	      de un copypaste de un proyecto anterior.
+\end{itemize}
+
+\subsubsection{28/03/2022}
+\begin{itemize}
+	\item Cometi un error haciendo un stash en git y elimine parte del trabajo que hice
+	      en el informe :'(
+	\item Encontre este codigo que me puede servir
+
+	      \url{https://esp32io.com/tutorials/esp32-rfid-nfc}
+	\item Tambien encontre la documentacion de la libreria para los RFID que usa el
+	      protocolo de comunicacion MFRC, pero como usa SPI no se como meter varios RFID en
+	      paralelo sin usar RFID, lo tendria que investigar
+	      \url{https://www.arduino.cc/reference/en/libraries/mfrc522/}
+\end{itemize}
+
+\subsubsection{29/03/2022}
+\begin{itemize}
+	\item Investigando info para hacer el informe y saber más sobre SPI, encontre esto:
+	      \begin{itemize}
+		      \item \url{https://www.arduino.cc/en/reference/SPI}
+		      \item \url{https://arduinogetstarted.com/faq/how-to-connect-multiple-spi-sensors-devices-with-arduino} (Especialmente útil para conectar multiples dispositivos)
+		      \item \url{https://arduinogetstarted.com/tutorials/arduino-rfid-nfc}
+		      \item \url{https://www.exostivlabs.com/files/documents/Introduction-to-I2C-and-SPI-Protocols.pdf?/article/aa-00255/22/introduction-to-spi-and-ic-protocols.html}
+		      \item \url{https://www.corelis.com/education/tutorials/spi-tutorial/}
+		      \item \url{https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/}
+	      \end{itemize}
+	\item Creo que para lo que quiero hacer me sirve la conexion daisy-chained
+	      del protocolo SPI
+	\item Para las bibliografias, voy a usar esto \url{https://latex-tutorial.com/tutorials/bibtex/}
+	\item tambien este tutorial sirve \url{https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex}
+	\item Estuve trabajando en el informe, hice gran parte de la sección del SPI
+
+	      \subsubsection{30/03/2022}
+	      \begin{itemize}
+		      \item Hoy estoy trabajando en la documentacion del sistema RFID, mientras espero
+		            que lleguen los componentes que compré. Estoy haciendo la documentación porque
+		            me sirve para estudiar y ya entrar a armar cosas con más conocimiento.
+	      \end{itemize}
+\end{itemize}
+\end{document}
