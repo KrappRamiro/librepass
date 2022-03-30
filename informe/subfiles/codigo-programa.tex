@@ -1,0 +1,23 @@
+\documentclass[../informe_krapp.tex]{subfiles}
+\begin{document}
+\section{Codigo del programa}
+El codigo de programa fue escrito usando Visual Studio Code, usando la extensión
+de platformIO con el framework de Arduino.
+
+Para el versionado del código, se uso Git \url{https://git-scm.com/}, un programa
+FOSS estandar en la industria.
+Para una mejor organización, se dividió en tres branches principales:
+\begin{enumerate}
+	\item Una branch main, con las versiones estables del código.
+	\item Una branch dev, con las versiones de desarrollo.
+	\item Una branch dev-tema-a-desarrollar, (reemplazando tema-a-desarrollar por el
+	      tema que se desarrolla, se usaba una de estas y despues se mergeaba con dev)
+\end{enumerate}
+
+\inputminted %TODO: ponerle inconsolata
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Codigo principal]
+{cpp}{../src/main.cpp}
+
+
+\end{document}

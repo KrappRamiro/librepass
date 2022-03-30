@@ -1,0 +1,123 @@
+\documentclass{article}
+
+% ----------------------- PAQUETES ---------------------- %
+% Set the font (output) encodings
+\usepackage[T1]{fontenc}					% encoding de la fuente
+\usepackage[spanish]{babel}				% paquete para los acentos en español
+\usepackage{graphicx}							% paquete para poder usar graficos
+\usepackage{float}								% paquete para poder usar \begin {figure}[H]
+\usepackage{xurl}					% https://stackoverflow.com/questions/4146606/wrap-url-ignores-margin-in-bibtex-using-pdflatex
+\usepackage{hyperref}							% paquete para hacer hyperreferencias a links
+\usepackage{fancyhdr}							% paquete para poner cosas en footer y header
+\usepackage{wrapfig}							% paquete para hacer wrapfigure
+\usepackage{titling}							% paquete para modificar el espaciado de los titulos
+\usepackage{titlesec}							% paquete para modificar como se ven los titulos
+\usepackage{minted}								% paquete para agregar codigo al documento
+\usepackage[margin=1in]{geometry} % paquete para meter un margen de una pulgada
+\usepackage{todonotes}						% paquete para hacer todos
+\usepackage{subfiles}							% paquete para hacer subfiles
+\usepackage{csquotes}							% lo necesita biblatex
+
+
+% ------------------------------------------------------- %
+
+%------------------- INICIO DE BIBLIOGRAFIA ------------------------- %
+\usepackage[
+	backend=biber,
+	style=numeric,
+]{biblatex}
+\addbibresource{bibliografia.bib}
+\nocite{*} %nocite lo que hace es poner todas las bibliografias de mi archivo .bib, 
+% sin importar si fueron citadas o no en el documento
+%------------------- FIN DE BIBLIOGRAFIA ------------------------- %
+
+% ---------------------- CONFIGURACION ------------------ %
+
+\graphicspath{{images/}}
+% ----------------- Configuracion de hyperref ----------- %
+\hypersetup{								
+	colorlinks=true,
+	linkcolor=black,			%modo claro
+	%linkcolor=white,		%modo oscuro
+	filecolor=brown,		
+	urlcolor=blue,
+	pdftitle={Traintorio},
+	}
+% ------------------------------------------------------- %
+
+% ----------------- Configuracion de fancyhdr --------------- %
+\pagestyle{fancy}
+\setlength{\headheight}{12.17pt} %esto esta para solucionar un warning del fancyhdr
+\rfoot{Página \thepage}
+\cfoot{}
+\lfoot{Krapp Ramiro}
+\renewcommand{\sectionmark}[1]{%
+\markboth{\thesection\quad #1}{}}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{Traintorio}
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{1pt}
+% ------------------------------------------------------- %
+
+
+%-------------- Formatos de los titulos --------------%
+\newcommand{\sectionbreak}{\clearpage}
+\titleformat{\section}
+	{\bfseries \huge}
+	{}
+	{0em}
+	{}[\titlerule]
+
+\titleformat{\subsection}
+	{\bfseries \Large}
+	{}
+	{0em}
+	{}
+
+\titleformat{\subsubsection}
+	{\bfseries \large}
+	{}
+	{0em}
+	{}
+
+\titlespacing{\section} %me permite controlar el espaciado de la seccion que le indico
+	{0em}
+	{0em}
+	{1.5em}
+
+\titlespacing{\subsection}
+{0em} %sangria
+{3em} %separacion con lo que hay arriba
+{0.5em} %separacion con lo que hay abajo
+%----------------------------------------------------- %
+
+% ----------------- FIN DE CONFIGURACION ------------- %
+
+\begin{document}
+
+\subfile{subfiles/portada.tex}
+
+% ------------------ INICIO DE INDICE ------------------ %
+
+\tableofcontents		\noindent\rule{\textwidth}{0.7pt }
+El índice tiene hipervínculos incorporados!
+Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa página
+\\[12pt] %esto esta para generar un espaciado entre lineas
+{\large Tengo un
+\href{https://github.com/KrappRamiro/traintorio}{Repositorio en GitHub}}\\
+{\small \url{https://github.com/KrappRamiro/traintorio}}
+
+% ------------------ FIN DE INDICE ------------------- %
+\subfile{subfiles/introduccion.tex}
+\subfile{subfiles/partes-proyecto.tex}
+\subfile{subfiles/diagrama-esquematico.tex}
+\subfile{subfiles/codigo-programa.tex}
+\subfile{subfiles/bitacoras.tex}
+
+% Bibliografia, hace su propia \section 
+{
+	\emergencystretch=1em %esto esta aca para que una de las urls no se vaya de pantalla
+	\printbibliography
+}
+
+\end{document}
