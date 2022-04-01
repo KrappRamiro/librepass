@@ -103,6 +103,34 @@
 	      La voy a llamar Librepass
 \end{itemize}
 
+\subsubsection{31/03/2022}
+\begin{itemize}
+	\item Encontre una nueva version de la libreria MFRC552, que soporta I2C
+	      \url{https://github.com/OSSLibraries/Arduino_MFRC522v2}
+	\item Esa libreria no me detecta mi lector, probe con el ejemplo CheckFirmware y
+	      DumpInfo, y segun CheckFirmware, no todos los hardwares son soportados
+	\item Probe con la version original de la libreria, y tampoco me detecta mi sensor
+\end{itemize}
+
+\subsubsection{01/04/2022}
+\begin{itemize}
+	\item Creo que se por que no funcionaba, la version nueva de la libreria funciona
+	      con ciertos sensores, y no estoy del todo seguro de por qué.
+
+	      Ademas, los ejemplos que habia en la documentacion de la nueva no funcionaban en ningun
+	      caso, no estoy seguro de por qué.
+
+	      Estoy pensando de mantener el pinout de la version que me funciona, y modificar
+	      el pinout del codigo de la version v2, pero no creo que me sirva para demasiado, si
+	      total la version original ya me funciona para todo lo que quiero hacer.
+
+	      Mucho más que leer la UID no necesito para este sistema. Por qué no guardo la info
+	      de usuario en la propia tarjeta? Porque es una idea estúpida, es muy facil
+	      clonar cualquiera de estas tarjetas, entonces lo que tengo que hacer es un sistema de
+	      usuarios y contraseñas. Deberia de ver si hay alguna forma de no guardar la contraseña
+	      en plaintext, seguro que hay alguna forma, siempre hay una forma.
+\end{itemize}
+
 \end{document}
 
 

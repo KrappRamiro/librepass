@@ -23,6 +23,8 @@ using std::vector;
 	Por eso se usan funciones public, normalmente llamadas setters, que permiten
 	asignar y leer los valores, y que establecen un margen de valores seguros.
 */
+
+/*
 class Empleado {
 private:
 	String name;
@@ -53,6 +55,7 @@ public:
 		this->cargoAdministrativo = cargoAdministrativo;
 	}
 };
+*/
 
 #include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
 #include <SPI.h> //library responsible for communicating of SPI bus

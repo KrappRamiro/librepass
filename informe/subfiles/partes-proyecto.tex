@@ -97,30 +97,38 @@ el master deberá reconfigurarse cada vez que se desee comunicar con cada dispos
 
 
 
+\clearpage
 
-%\subsection{DOIT ESP32 DevKit v1}
-%\begin{wrapfigure}{r}{0in}
-%	\centering
-%	\includegraphics[width= 1.5in, keepaspectratio]{ESP32-board.jpg}
-%\end{wrapfigure}
-%El kit de desarrollo DOIT ESP32 DevKit v1
-%
-%
-%
+\subsection{DOIT ESP32 DevKit v1}
+\begin{wrapfigure}{r}{0in}
+	\centering
+	\includegraphics[width= 1.5in, keepaspectratio]{ESP32-board.jpg}
+\end{wrapfigure}
+El kit de desarrollo DOIT ESP32 DevKit v1
+
+
+
+\clearpage
 \subsection{RFID}
+Segun Wikipedia\cite{wikipedia_rfid_es}:
+
+\begin{center}
+	\rule{0.9\textwidth}{0.5pt}
+\end{center}
+``RFID o identificación por radiofrecuencia
+(del inglés Radio Frequency Identification) es un sistema de almacenamiento y recuperación
+de datos remotos que usa dispositivos denominados etiquetas, tarjetas o transpondedores
+RFID.
+
 \begin{wrapfigure}{r}{0in}
 	\centering
 	\includegraphics[width= 1.5in, keepaspectratio]{rfid-rc552.jpg}
 \end{wrapfigure}
-%An RFID system basically consists of a transceiver with a decoder and an antenna and a transponder. And how it works? These cards have a reel inside them. When you approach them from the reader, they emit a radio signal through the antennas connected to the reader. The energized tag, which is the card, modulates the information stored in its memory and sends that data to the reader. This card then enters the reading field and receives power from the reader to perform the operations. The RFID reader receives the information sent by the tag, decodes and sends the data to the server application
 
-Segun Wikipedia\cite{wikipedia_rfid_es}, ``RFID o identificación por radiofrecuencia
-(del inglés Radio Frequency Identification) es un sistema de almacenamiento y recuperación
-de datos remotos que usa dispositivos denominados etiquetas, tarjetas o transpondedores
-RFID. El propósito fundamental de la tecnología RFID es transmitir la identidad de
+El propósito fundamental de la tecnología RFID es transmitir la identidad de
 un objeto (similar a un número de serie único) mediante ondas de radio. Las tecnologías
-RFID se agrupan dentro de las denominadas Auto ID (automatic identification, o identificación
-automática).
+RFID se agrupan dentro de las denominadas Auto ID (automatic identification,
+o identificación automática).
 
 Las etiquetas RFID (RFID tag en inglés) son unos dispositivos pequeños, similares
 a una pegatina, que pueden ser adheridas o incorporadas a un producto, un animal
@@ -128,7 +136,80 @@ o una persona. Contienen antenas para permitirles recibir y responder a peticion
 por radiofrecuencia desde un emisor-receptor RFID. Las etiquetas pasivas no necesitan
 alimentación eléctrica interna, mientras que las activas sí lo requieren.
 
-Una de las ventajas del uso de radiofrecuencia (en lugar, por ejemplo, de infrarrojos) es que no se requiere visión directa entre emisor y receptor''
+Una de las ventajas del uso de radiofrecuencia (en lugar, por ejemplo, de infrarrojos)
+es que no se requiere visión directa entre emisor y receptor''
 
+\begin{center}
+	\rule{0.9\textwidth}{0.5pt}
+\end{center}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.4\textwidth}
+		\includegraphics[width=0.7\textwidth]{llavero-rfid.jpg}
+		\caption{Un llavero RFID}
+	\end{subfigure}
+	\begin{subfigure}{0.4\textwidth}
+		\includegraphics[width=0.7\textwidth]{tarjeta-rfid.jpg}
+		\caption{Una tarjeta RFID}
+	\end{subfigure}
+	\caption{Distintos tags RFID}
+\end{figure}
+
+\clearpage
+\subsubsection{Pinout del dispositivo}
+
+\begin{wrapfigure}{r}{0in}
+	\centering
+	\includegraphics[width=0.5\textwidth]{rfid-rc522-pinout.jpg}
+	\caption{El pinout del lector RFID-RC552.
+		Se puede notar como este dispositivo está adaptado para funcionar con 3 protocolos
+		distintos, comunicación por UART, comunicación por I2C y comunicacion por SPI}
+\end{wrapfigure}
+
+% la verdad es que este "---" esta RE mal, lo tendria que cambiar con titlesec
+
+\paragraph{pin SDA ---}
+Este pin se utiliza de forma distinta dependiendo del protocolo
+de comunicación utilizado.
+\begin{itemize}
+	\item En I2C, se usa como el pin SDA.
+	\item En UART, se usa como pin RX.
+	\item En SPI, se usa como el pin SS
+\end{itemize}
+
+\paragraph{pin SCK ---}
+El pin SCK se usa para mantener el sincronísmo con una señal de reloj
+
+\paragraph{pin MOSI ---}
+El pin MOSI sirve para hacer una transmisión Master Out - Slave In
+
+\paragraph{pin MISO ---}
+El pin MISO sirve para hacer una transmisión Master In - Slave Out
+
+\paragraph{pin IRQ ---}
+Se usa para las interrupciones
+
+\paragraph{GND ---}
+Sirve para mantener la referencia con Masa
+
+\paragraph{RST ---}
+Este pin sirve para resetear o desactivar el circuito integrado
+
+\paragraph{VCC ---}
+Pin de alimentación \textbf{3.3v}
+
+\clearpage
+\subsubsection{Mapeo de Memoria}
+La identificación se realiza con unos llaveros o unas tarjetas,
+que tienen este mapeo de memoria:
+
+Tenemos 1k de memoria adentro de este chip, y la memoria EEPROM esta organizada de la
+siguiente manera: Hay 16 sectores de 4 bloques, y cada bloque contiene 16 bytes.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{rfid-mapeo-memoria.png}
+\end{figure}
 
 \end{document}
