@@ -10,4 +10,12 @@ Estos lectores son capaces de leer un sistema de tarjetas y/o llaveros RFID con 
 código hexadecimal indentificador, el cual se asigna a cada empleado de la empresa, y
 sirve para identificar al empleado.
 
+A nivel de hardware, hay 3 componentes involucrados:
+\begin{enumerate}
+	\item El microcontrolador: un ESP32
+	\item EL PCD (Proximity Coupling Device): RFID-MFRC522
+	\item El PICC (Proximity Integrated Circuit Card): Una tarjeta o llavero usando
+	      la interfaz ISO 14443A
+\end{enumerate}
+
 \end{document}

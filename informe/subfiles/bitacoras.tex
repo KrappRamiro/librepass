@@ -13,7 +13,6 @@
 	      un salario y un seniority.
 \end{itemize}
 \subsubsection{25/03/2022}
-\todo{Hacer las urls mas chicas con \small o tiny}
 \begin{itemize}
 	\item Pienso implementar la sube con un sistema usando RFID\\
 	      \small{\url{https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/}}
@@ -49,7 +48,7 @@
 	      PCD\_Authenticate() failed: Timeout in communication.
 	\item Creo que se por qué dejó de funcionar, me parece que cortocircuité algo
 	      con el la parte de metal del llavero, me parece haber cortocircuitado
-	      los pines del sensor RFID-RC552
+	      los pines del lector RFID-RC552
 \end{itemize}
 
 \subsubsection{27/03/2022}
@@ -87,7 +86,7 @@
 	\item Creo que para lo que quiero hacer me sirve la conexion daisy-chained
 	      del protocolo SPI
 	\item Para las bibliografias, voy a usar esto \url{https://latex-tutorial.com/tutorials/bibtex/}
-	\item tambien este tutorial sirve \url{https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex}
+	\item también este tutorial sirve \url{https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex}
 	\item Estuve trabajando en el informe, hice gran parte de la sección del SPI
 
 \end{itemize}
@@ -105,11 +104,18 @@
 
 \subsubsection{31/03/2022}
 \begin{itemize}
-	\item Encontre una nueva version de la libreria MFRC552, que soporta I2C
+	\item Hoy estuve haciendo pruebas, logre hacer andar el lector usando la tarjeta,
+	      incluso pareciera como si la tarjeta leyera más rápido. Estuve usando el
+	      código que saqué de instructables.
+	      Yo pensé que había quemado el lector, pero me parece que lo que
+	      dejó de andar es el tag RFID, desconozco exactamente el por qué, sospecho
+	      que dejó de funcionar cuando quise leer/escribir en otros bloques
+	      que no sean el 1. Desconozco también el por qué esto arruinaría el tag.
+	\item Encontre una nueva version de la libreria MFRC522, que soporta I2C
 	      \url{https://github.com/OSSLibraries/Arduino_MFRC522v2}
 	\item Esa libreria no me detecta mi lector, probe con el ejemplo CheckFirmware y
 	      DumpInfo, y segun CheckFirmware, no todos los hardwares son soportados
-	\item Probe con la version original de la libreria, y tampoco me detecta mi sensor
+	\item Probe con la version original de la libreria, y tampoco me detecta mi lector
 \end{itemize}
 
 \subsubsection{01/04/2022}
@@ -129,7 +135,66 @@
 	      clonar cualquiera de estas tarjetas, entonces lo que tengo que hacer es un sistema de
 	      usuarios y contraseñas. Deberia de ver si hay alguna forma de no guardar la contraseña
 	      en plaintext, seguro que hay alguna forma, siempre hay una forma.
+
+	\item Estaba teniendo un problema con la declaración de la clase Empleado,
+	      por alguna razón todos los setters que seteaban Strings no funcionaban. La razón?
+	      Me confundí al hacer un copypaste, y llame a todos los setters
+	      de la misma forma, void setName() {...}
+
+	\item Al final voy a usar SPI, no pude hacer andar la libreria para que funcione
+	      con I2C. Igual al final es mejor, llego a poder experimentar con SPI.
+	      En cierta forma me conviene, porque SPI es rapidisimo, y la realidad es que nadie
+	      quere estar mas de 1 segundo apoyando la tarjeta para que se la lea.
+
+	\item Del informe me queda pendiente hacer la seccion del ESP32 de partes-proyecto, hablar un poco
+	      de las ventajas y desventajas de SPI, y unas cosas más.
+
+	      Pero ahora me voy a poner a programar, quiero diseccionar el
+	      codigo que saqué de un tutorial de instructables.
+
+	\item En muchas partes se habla del PICC, significa
+	      Proximity Integrated Circuit Card, es el chip que esta adentro del tag RFID.
+
+	\item Tambien, PCD significa proximity coupling device.
+
+	\item Voy a eliminar la funcion writingData(), no me sirve para nada, ya que
+	      me voy a manejar todo por el sistema microcontrolado
+
+	\item Me puse a curiosear (de vuelta) con la version v2 de la libreria
+	      MFRC522v2, (que necesita que incluyas wire)
+	      y lo hice andar. Nomas tuve que copiar el pinout que aparece en este github
+	      \url{https://github.com/OSSLibraries/Arduino_MFRC522v2}, pero con RST en el
+	      pin 22, y puse SPI SS (o sea, SDA) en el pin 21. Deberia ver que pasa si
+	      lo conecto como aparece en el github, pero por ahora,
+	      \textbf{El dumpinfo está andando}.
+
+	\item Ahi lo probé con el pinout como el github,
+	      y anda jajajaja, que locuras de la vida,
+	      es la primera vez que un circuito que armo a las 20:55 funciona,
+	      por lo general es al revés, me voy a dormir con los circuitos que no funcionan.
+
+	\item Bueno, creo que lo decidí, me voy a pasar a la version v2 de la libreria,
+	      es más nueva y tiene soporte, no como la otra que está abandonada y solamente
+	      acepta pull requests para corregir typos.
+
+	\item La razon por la que antes no andaba es muy sencilla, creo que solamente
+	      conectado un pin, el de SS. O sea, cuando lo armé me parecía muy raro que en código
+	      solamente especificara un solo pin, pero como estaba muy quemado pensé que capaz
+	      solamente usaba un pin. No tuvo ningun sentido la verdad, son cosas de estar muy
+	      quemado de la cabeza
+
+
+
 \end{itemize}
+\subsubsection{02/04/2022}
+\begin{itemize}
+	\item Me puse a testear los codigos de ejemplo del MFRC522v2, parece que el
+	      CheckFirmware anda bien ahora que lo conecté bien
+	\item Este issue de github me puede guiar a usar multiples lectores RFID
+	\item La carpeta doc de la libreria MFRC522 me tira documentación muy util
+	\item \url{https://github.com/OSSLibraries/Arduino_MFRC522v2/tree/master/doc}
+\end{itemize}
+
 
 \end{document}
 

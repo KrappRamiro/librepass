@@ -24,7 +24,6 @@ using std::vector;
 	asignar y leer los valores, y que establecen un margen de valores seguros.
 */
 
-/*
 class Empleado {
 private:
 	String name;
@@ -42,53 +41,64 @@ public:
 	{
 		this->name = name;
 	}
-	void setName(String dni)
+	void setDni(String dni)
 	{
 		this->dni = dni;
 	}
-	void setName(int clearanceLevel)
+	void setClearanceLevel(int clearanceLevel)
 	{
 		this->clearanceLevel = clearanceLevel;
 	}
-	void setName(String cargoAdministrativo)
+	void setCargoAdministrativo(String cargoAdministrativo)
 	{
 		this->cargoAdministrativo = cargoAdministrativo;
 	}
 };
-*/
 
 #include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
 #include <SPI.h> //library responsible for communicating of SPI bus
-#define SS_PIN 21
-#define RST_PIN 22
-#define SIZE_BUFFER 18
+#define SS_PIN 5
+#define RST_PIN 21
+#define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
+// Por que es 18? Porque son 16 bytes de los datos del tag, y 2 bytes de checksum
 #define MAX_SIZE_BLOCK 16
 #define greenPin 12
 #define redPin 32
-// used in authentication
+
+// key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
-// authentication return status code
+// Status es el codigo de estado de autenticacion
 MFRC522::StatusCode status;
-// Defined pins to module RC522
+// Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-// reads data from card/tag
 void readingData()
 {
-	// prints the technical details of the card/tag
+	/*
+	Esta funcion lee la data del tag RFID
+	*/
+	// Imprime la información técnica del tag
 	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
 
-	// prepare the key - all keys are set to FFFFFFFFFFFFh
+	// Prepara la key, todas las keys estan seteadas a ser FFFFFFFFFFFFh
 	for (byte i = 0; i < 6; i++)
 		key.keyByte[i] = 0xFF;
 
-	// buffer for read data
+	// Preparo un buffer para la lectura de informacion.
+	// El tamaño del buffer depende de SIZE_BUFFER, es un #define que esta en la parte de arriba
 	byte buffer[SIZE_BUFFER] = { 0 };
 
-	// the block to operate
+	// Defino en que bloque del tag voy a estar trabajando
 	byte block = 1;
-	byte size = SIZE_BUFFER; // authenticates the block to operate
-	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid)); // line 834 of MFRC522.cpp file
+	byte size = SIZE_BUFFER; // size va a ser usado para leer luego el bloque
+
+	// Intenta conectarse con el PICC (Proximity Integrated Circuit Card).
+	// En caso de lograrlo, devuelve STATUS_OK, segun la inea 750 de MFRC552.cpp
+	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid));
+
+	// Intenta comunicarse con el PICC
+	// SI no lo logró, tira el codigo de error y sale de la funcion
+	// Si lo logró, sigue de largo
 	if (status != MFRC522::STATUS_OK) {
 		Serial.print(F("Authentication failed: "));
 		Serial.println(mfrc522.GetStatusCodeName(status));
@@ -98,7 +108,9 @@ void readingData()
 		return;
 	}
 
-	// read data from block
+	// Intenta leer el bloque n del tag
+	// Si no lo logro, tira codigo de error y sale de la funcion
+	// Si lo logró, va al else
 	status = mfrc522.MIFARE_Read(block, buffer, &size);
 	if (status != MFRC522::STATUS_OK) {
 		Serial.print(F("Reading failed: "));
@@ -108,92 +120,33 @@ void readingData()
 		digitalWrite(redPin, LOW);
 		return;
 	} else {
+		Serial.print(F("Reading OK"));
 		digitalWrite(greenPin, HIGH);
 		delay(1000);
 		digitalWrite(greenPin, LOW);
 	}
 
+	// ----- A esta sección de aca solamente se llega despues de que todo salió bien ------//
 	Serial.print(F("\nData from block ["));
+	// Printea el bloque leido
 	Serial.print(block);
 	Serial.print(F("]: "));
 
-	// prints read data
+	// Printea lo que leyó
 	for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
 		Serial.write(buffer[i]);
 	}
-	Serial.println(" ");
+	Serial.println(F(" "));
 }
 
-void writingData()
-{
-
-	// prints thecnical details from of the card/tag
-	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
-
-	// waits 30 seconds dor data entry via Serial
-	Serial.setTimeout(30000L);
-	Serial.println(F("Enter the data to be written with the '#' character at the end \n[maximum of 16 characters]:"));
-
-	// prepare the key - all keys are set to FFFFFFFFFFFFh
-	for (byte i = 0; i < 6; i++)
-		key.keyByte[i] = 0xFF;
-
-	// buffer para armazenamento dos dados que iremos gravar
-	// buffer for storing data to write
-	byte buffer[MAX_SIZE_BLOCK] = "";
-	byte block; // the block to operate
-	byte dataSize; // size of data (bytes)
-
-	// recover on buffer the data from Serial
-	// all characters before chacactere '#'
-	dataSize = Serial.readBytesUntil('#', (char*)buffer, MAX_SIZE_BLOCK);
-	// void positions that are left in the buffer will be filled with whitespace
-	for (byte i = dataSize; i < MAX_SIZE_BLOCK; i++) {
-		buffer[i] = ' ';
-	}
-
-	block = 1; // the block to operate
-	String str = (char*)buffer; // transforms the buffer data in String
-	Serial.println(str);
-
-	// authenticates the block to operate
-	// Authenticate is a command to hability a secure communication
-	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A,
-		block, &key, &(mfrc522.uid));
-
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("PCD_Authenticate() failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	}
-	// else Serial.println(F("PCD_Authenticate() success: "));
-
-	// Writes in the block
-	status = mfrc522.MIFARE_Write(block, buffer, MAX_SIZE_BLOCK);
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("MIFARE_Write() failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	} else {
-		Serial.println(F("MIFARE_Write() success: "));
-		digitalWrite(greenPin, HIGH);
-		delay(1000);
-		digitalWrite(greenPin, LOW);
-	}
-}
-
-// menu to operation choice
 int menu()
+/*
+Menu
+*/
 {
-	Serial.println(F("\nChoose an option:"));
-	Serial.println(F("0 - Reading data"));
-	Serial.println(F("1 - Writing data\n"));
+	Serial.println(F("\nElige una opcion"));
+	Serial.println(F("0 - Leer data"));
+	Serial.println(F("1 - Escribir data\n"));
 
 	// waits while the user does not start data
 	while (!Serial.available()) { };
@@ -210,52 +163,67 @@ int menu()
 	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
 }
 
+String getUID()
+// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
+{
+	String content = "";
+	for (byte i = 0; i < mfrc522.uid.size; i++) {
+		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+		content.concat(String(mfrc522.uid.uidByte[i], HEX));
+	}
+	content.toUpperCase();
+	String theUID = content.substring(1);
+	return theUID;
+}
+
 void setup()
 {
 	Serial.begin(9600);
-	SPI.begin(); // Init SPI bus
-	pinMode(greenPin, OUTPUT);
-	pinMode(redPin, OUTPUT);
+	SPI.begin(); // Inicio el bus SPI
 
-	digitalWrite(greenPin, HIGH);
-	digitalWrite(redPin, HIGH);
-	delay(500);
-	digitalWrite(greenPin, LOW);
-	digitalWrite(redPin, LOW);
+	// Prendo el led de la placa cuando inicia el sismema
+	pinMode(LED_BUILTIN, OUTPUT);
+	digitalWrite(LED_BUILTIN, HIGH);
+	delay(1000);
+	digitalWrite(LED_BUILTIN, LOW);
 
-	// Init MFRC522
+	// Inicio el MFRC552
 	mfrc522.PCD_Init();
-	Serial.println("Approach your reader card...");
-	Serial.println();
+	// Le pido al usuario que acerque el tag RFID
+	Serial.println(F("Acerca tu tarjeta RFID\n"));
 }
 
 void loop()
 {
-	// Aguarda a aproximacao do cartao
-	// waiting the card approach
+	// Se espera a que se acerque un tag
 	if (!mfrc522.PICC_IsNewCardPresent()) {
 		return;
 	}
-	// Select a card
+	// Se espera a que se lean los datos
 	if (!mfrc522.PICC_ReadCardSerial()) {
 		return;
 	}
 
-	// Dump debug info about the card; PICC_HaltA() is automatically called
-	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));</p><p> //call menu function and retrieve the desired option
-	int op = menu();
+	// Descomentar solamente si se quiere Dumpear toda la info acerca de la tarjeta leida
+	// Ojo que llama automaticamente a PICC_HaltA()
+	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 
+	// LLama a la funcion de menu para que el usuario elija una opcion
+
+	int op = menu();
 	if (op == 0)
 		readingData();
-	else if (op == 1)
-		writingData();
-	else {
+	else if (op == 1) {
+		// writingData();
+	} else {
 		Serial.println(F("Incorrect Option!"));
 		return;
 	}
 
-	// instructs the PICC when in the ACTIVE state to go to a "STOP" state
+	// Le dice al PICC que se vaya a un estado de STOP cuando esta activo (o sea, lo haltea)
 	mfrc522.PICC_HaltA();
-	// "stop" the encryption of the PCD, it must be called after communication with authentication, otherwise new communications can not be initiated
+	// Esto "para" la encriptación del PCD (proximity coupling device).
+	// Tiene que ser llamado si o si despues de la comunicacion con una
+	// autenticación exitosa, en otro caso no se va a poder iniciar otra comunicación.
 	mfrc522.PCD_StopCrypto1();
 }
