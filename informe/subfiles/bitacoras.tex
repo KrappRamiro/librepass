@@ -193,6 +193,42 @@
 	\item Este issue de github me puede guiar a usar multiples lectores RFID
 	\item La carpeta doc de la libreria MFRC522 me tira documentación muy util
 	\item \url{https://github.com/OSSLibraries/Arduino_MFRC522v2/tree/master/doc}
+	\item De todas formas, voy a seguir trabajando con la librería original, por lo menos
+	      por ahora
+	\item Me puse a leer el codigo fuente de la libreria original, y creo que entiendo por
+	      qué el autor la abandonadó, es un caos, escasean los comentarios
+	      y no hay documentación del propósito de cada función.
+	\item Implemente una función para leer el UID, creo que no necesito mucho más.
+
+	\item Encontre una libreria para poder hacer logging, en vez de Serialprintear a
+	      lo imbecil. \url{https://github.com/thijse/Arduino-Log/}
+
+	\item Acabo de hacer una estupidez. Quise sujetar el ESP32 en el protoboard,
+	      para que no esté dando vueltas en el aire, con todos los cables dupont.
+	      Como no podia meterlo porque tenía cables en un lado, se me ocurrió la
+	      maravillosa idea de sujetarlo usando el carril de VCC del protoboard.
+
+	      En el momento, me dije a mí mismo `` No va a pasar nada, si no tengo nada
+	      conectado en el carril de VCC''.
+
+	      Momentos despues, se apagó el LED del ESP32, y me dí cuenta de mí error,
+	      acababa de cortocircuitar los primeros pines de la fila izquierda,
+	      acababa de cortocircuitar VIN y GND, quemando así el ESP32.
+
+	      Es un sábado a las 8 de la noche, y aora me quedé sin que programar el domingo.
+	      Encima voy a tener que comprar uno nuevo, y estan como 1300 pesos.
+
+	      Tambien tengo la opcion de ver que es lo que se quemó, pudo haber sido
+	      el regulador de tensión AMS 1117.
+
+	\item Me puse a buscar en internet, y no soy el primer imbecil que cortocircuitó
+	      esos dos pines. Parece que hay una solución, y es alimentarlo de forma externa
+	      desde VIN, porque lo que deja de funcionar cuando haces lo que yo hice
+	      es la alimentación desde cable USB.
+
+	\item Lo hice andar con alimentación externa, lol
+
+
 \end{itemize}
 
 

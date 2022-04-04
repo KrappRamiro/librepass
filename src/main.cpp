@@ -1,10 +1,16 @@
-/*
- */
-
 #include <Arduino.h>
+#include <ArduinoLog.h>
+#include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
+#include <SPI.h> //library responsible for communicating of SPI bus
 #include <iostream>
 #include <vector>
-
+#define SS_PIN 5
+#define RST_PIN 21
+#define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
+// Por que es 18? Porque son 16 bytes de los datos del tag, y 2 bytes de checksum
+#define MAX_SIZE_BLOCK 16
+#define greenPin 12
+#define redPin 32
 /* Se usa std::vector en reemplazo de usar `using namespace std` por una muy
 buena razon, y es que se evita el namespace pollution. Si no sabes qué es eso,
 te recomiendo personalmente este post,  es corto, sencillo, y bien explicado
@@ -13,18 +19,17 @@ https://www.thecrazyprogrammer.com/2021/01/better-alternatives-for-using-namespa
 */
 using std::vector;
 
-/*
-	Si alguien se pregunta por qué, en las clases, las variables estan en private,
-	la respuesta es muy sencilla:
-	Es porque no se desea que se modifiquen las variables de forma manual.
-	Esto es porque esa práctica es propensa a errores, ya que se podría introducir
-	un valor inadecuado y generar algun problema.
-
-	Por eso se usan funciones public, normalmente llamadas setters, que permiten
-	asignar y leer los valores, y que establecen un margen de valores seguros.
-*/
-
 class Empleado {
+	/*
+		Si alguien se pregunta por qué, en las clases, las variables estan en private,
+		la respuesta es muy sencilla:
+		Es porque no se desea que se modifiquen las variables de forma manual.
+		Esto es porque esa práctica es propensa a errores, ya que se podría introducir
+		un valor inadecuado y generar algun problema.
+
+		Por eso se usan funciones public, normalmente llamadas setters, que permiten
+		asignar y leer los valores, y que establecen un margen de valores seguros.
+	*/
 private:
 	String name;
 	bool isAlive = true;
@@ -37,40 +42,83 @@ public:
 	{
 		this->isAlive = lifeStatus;
 	}
+	bool getLifeStatus()
+	{
+		return isAlive;
+	}
 	void setName(String name)
 	{
+		Log.info(("Setting name to: "), name);
 		this->name = name;
+	}
+	String getName()
+	{
+		return name;
 	}
 	void setDni(String dni)
 	{
+		Log.info(("Setting dni to: "), dni);
 		this->dni = dni;
+	}
+	String getDni()
+	{
+		return dni;
 	}
 	void setClearanceLevel(int clearanceLevel)
 	{
+		Log.info(("Setting clearanceLevel to: "), clearanceLevel);
 		this->clearanceLevel = clearanceLevel;
+	}
+	int getClearanceLevel()
+	{
+		return clearanceLevel;
 	}
 	void setCargoAdministrativo(String cargoAdministrativo)
 	{
+		Log.info(("Setting cargoAdministrativo to: "), cargoAdministrativo);
 		this->cargoAdministrativo = cargoAdministrativo;
+	}
+	String getCargoAdministrativo()
+	{
+		return cargoAdministrativo;
 	}
 };
 
-#include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
-#include <SPI.h> //library responsible for communicating of SPI bus
-#define SS_PIN 5
-#define RST_PIN 21
-#define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
-// Por que es 18? Porque son 16 bytes de los datos del tag, y 2 bytes de checksum
-#define MAX_SIZE_BLOCK 16
-#define greenPin 12
-#define redPin 32
+Empleado myExampleEmpleado;
 
+// --------------- Variables del MFRC552 -------------------#
 // key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
 // Status es el codigo de estado de autenticacion
 MFRC522::StatusCode status;
 // Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+// --------------- FIN DE Variables del MFRC552 -------------------#
+
+String getUID()
+// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
+{
+	String content = "";
+	for (byte i = 0; i < mfrc522.uid.size; i++) {
+		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+		content.concat(String(mfrc522.uid.uidByte[i], HEX));
+	}
+	content.toUpperCase();
+	String theUID = content.substring(1);
+	return theUID;
+}
+
+String getUserStringSerialInput()
+{
+
+	Serial.setTimeout(30000L);
+	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
+
+	String userInput = Serial.readStringUntil('*');
+	Serial.print("I received: ");
+	Serial.println(userInput);
+	return userInput;
+}
 
 void readingData()
 {
@@ -140,13 +188,13 @@ void readingData()
 }
 
 int menu()
-/*
-Menu
-*/
 {
+	// TODO: Reemplazar una parte de los contenidos de esta funcion
+	//  con un llamado a getUserSerialInput
 	Serial.println(F("\nElige una opcion"));
 	Serial.println(F("0 - Leer data"));
 	Serial.println(F("1 - Escribir data\n"));
+	Serial.println(F("2 - leer nombre empleado\n"));
 
 	// waits while the user does not start data
 	while (!Serial.available()) { };
@@ -163,25 +211,13 @@ Menu
 	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
 }
 
-String getUID()
-// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
-{
-	String content = "";
-	for (byte i = 0; i < mfrc522.uid.size; i++) {
-		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-		content.concat(String(mfrc522.uid.uidByte[i], HEX));
-	}
-	content.toUpperCase();
-	String theUID = content.substring(1);
-	return theUID;
-}
-
 void setup()
 {
 	Serial.begin(9600);
 	SPI.begin(); // Inicio el bus SPI
+	Log.begin(LOG_LEVEL_NOTICE, &Serial); // Inicio del sistema de logging
 
-	// Prendo el led de la placa cuando inicia el sismema
+	// Prendo el led de la placa cuando inicia el sistema
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
 	delay(1000);
@@ -203,25 +239,29 @@ void loop()
 	if (!mfrc522.PICC_ReadCardSerial()) {
 		return;
 	}
-
 	// Descomentar solamente si se quiere Dumpear toda la info acerca de la tarjeta leida
 	// Ojo que llama automaticamente a PICC_HaltA()
 	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 
 	// LLama a la funcion de menu para que el usuario elija una opcion
-
 	int op = menu();
 	if (op == 0)
 		readingData();
 	else if (op == 1) {
-		// writingData();
-	} else {
+		myExampleEmpleado.setName(getUserStringSerialInput());
+	} else if (op == 2) {
+		Serial.print("\nThe employee name is: ");
+		Serial.print(myExampleEmpleado.getName());
+	}
+
+	else {
 		Serial.println(F("Incorrect Option!"));
 		return;
 	}
 
 	// Le dice al PICC que se vaya a un estado de STOP cuando esta activo (o sea, lo haltea)
 	mfrc522.PICC_HaltA();
+
 	// Esto "para" la encriptación del PCD (proximity coupling device).
 	// Tiene que ser llamado si o si despues de la comunicacion con una
 	// autenticación exitosa, en otro caso no se va a poder iniciar otra comunicación.
