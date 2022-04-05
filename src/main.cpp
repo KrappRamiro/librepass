@@ -17,8 +17,6 @@ te recomiendo personalmente este post,  es corto, sencillo, y bien explicado
 para principiantes:
 https://www.thecrazyprogrammer.com/2021/01/better-alternatives-for-using-namespace-std-in-c.html
 */
-using std::vector;
-
 class Empleado {
 	/*
 		Si alguien se pregunta por qué, en las clases, las variables estan en private,
@@ -38,6 +36,25 @@ private:
 	String cargoAdministrativo;
 
 public:
+	static int cuentaEmpleados;
+	// Constructor vacio
+	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
+	{
+		Log.info("Creando empleado");
+		cuentaEmpleados++;
+		setName(name);
+		setDni(dni);
+		setClearanceLevel(clearanceLevel);
+		setCargoAdministrativo(cargoAdministrativo);
+	}
+	// Constructor vacio
+	Empleado() { cuentaEmpleados++; }
+
+	// Destructor
+	~Empleado()
+	{
+		cuentaEmpleados--;
+	}
 	void setLifeStatus(bool lifeStatus)
 	{
 		this->isAlive = lifeStatus;
@@ -83,8 +100,12 @@ public:
 		return cargoAdministrativo;
 	}
 };
+int Empleado::cuentaEmpleados = 0;
 
-Empleado myExampleEmpleado;
+// std::vector<Empleado> Empleados;
+// Un array de empleados para almacenar múltiples empleados
+// TODO cambiarlo por un vector
+Empleado misEmpleados[20];
 
 // --------------- Variables del MFRC552 -------------------#
 // key es una variable que se va a usar a lo largo de todo el codigo
@@ -94,6 +115,31 @@ MFRC522::StatusCode status;
 // Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 // --------------- FIN DE Variables del MFRC552 -------------------#
+
+String getUserStringSerialInput()
+{
+	Serial.setTimeout(30000L);
+	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
+
+	String userInput = Serial.readStringUntil('*');
+	Serial.print("I received: ");
+	Serial.println(userInput);
+	return userInput;
+}
+
+void createEmployee()
+{
+	//	Empleado* temp = new Empleado(
+	//		getUserStringSerialInput(),
+	//		getUserStringSerialInput(),
+	//		4,
+	//		getUserStringSerialInput());
+	misEmpleados[0] = Empleado(
+		getUserStringSerialInput(),
+		getUserStringSerialInput(),
+		4,
+		getUserStringSerialInput());
+}
 
 String getUID()
 // conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
@@ -106,18 +152,6 @@ String getUID()
 	content.toUpperCase();
 	String theUID = content.substring(1);
 	return theUID;
-}
-
-String getUserStringSerialInput()
-{
-
-	Serial.setTimeout(30000L);
-	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
-
-	String userInput = Serial.readStringUntil('*');
-	Serial.print("I received: ");
-	Serial.println(userInput);
-	return userInput;
 }
 
 void readingData()
@@ -248,10 +282,12 @@ void loop()
 	if (op == 0)
 		readingData();
 	else if (op == 1) {
-		myExampleEmpleado.setName(getUserStringSerialInput());
+		// crear empleado
+		createEmployee();
 	} else if (op == 2) {
+		// leer info del primer empleado
 		Serial.print("\nThe employee name is: ");
-		Serial.print(myExampleEmpleado.getName());
+		Serial.print(misEmpleados[0].getName());
 	}
 
 	else {

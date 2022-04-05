@@ -226,10 +226,31 @@
 	      desde VIN, porque lo que deja de funcionar cuando haces lo que yo hice
 	      es la alimentación desde cable USB.
 
-	\item Lo hice andar con alimentación externa, lol
-
-
+	\item Lo hice andar con alimentación externa
 \end{itemize}
+
+\subsubsection{04/04/2022}
+\begin{itemize}
+	\item Eventualmente voy a tener que usar FreeRTOS, para usar multiples tasks
+	      \url{https://randomnerdtutorials.com/esp32-dual-core-arduino-ide/}
+	\item Anduve probando de hacer la lista de empleados con un vector en vez
+	      de un array, pero se ve más complejo de usar. Eso no es un problema, pero preferiría
+	      dejarlo para el final. Tambien buscando cosas, encontre esta libreria
+	      \url{https://github.com/janelia-arduino/Vector}, tendría que comparar que ventajas
+	      tiene con respecto a
+	      \url{https://github.com/mike-matera/ArduinoSTL?utm_source=platformio&utm_medium=piohome},
+	      que es un port de la C++ standard library.
+	\item Tuve problemas creando un array de la clase Empleado, me tiraba errores
+	      con el constructor, y lo solucioné haciendo sobrecarga de constructores, hice
+	      un constructor con parametros, y otro sín parámetros.
+	      Tambien para mantener una cuenta de los empleados, hice una variable static
+	      en la clase Empleado, llamada cuentaEmpleados, que se modifica en los constructores
+	      y destructores.
+	\item Estuve trabajando hasta las 9:30PM en una placa preperforada
+	      para no tener que estar con el protoboard, que tiene una calidad deplorable,
+	      y tener todo bien organizado. \todo{adjuntar imagen}
+\end{itemize}
+
 
 
 \end{document}
