@@ -37,7 +37,7 @@ private:
 
 public:
 	static int cuentaEmpleados;
-	// Constructor vacio
+	// Constructor lleno
 	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
 	{
 		Log.info("Creando empleado");
@@ -223,8 +223,8 @@ void readingData()
 
 int menu()
 {
-	// TODO: Reemplazar una parte de los contenidos de esta funcion
-	//  con un llamado a getUserSerialInput
+	//  TODO: Reemplazar una parte de los contenidos de esta funcion
+	//   con un llamado a getUserSerialInput
 	Serial.println(F("\nElige una opcion"));
 	Serial.println(F("0 - Leer data"));
 	Serial.println(F("1 - Escribir data\n"));
