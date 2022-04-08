@@ -40,7 +40,8 @@ public:
 	// Constructor lleno
 	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
 	{
-		Log.info("Creando empleado");
+		Log.infoln("Creando empleado con los siguientes valores: ");
+
 		cuentaEmpleados++;
 		setName(name);
 		setDni(dni);
@@ -65,7 +66,7 @@ public:
 	}
 	void setName(String name)
 	{
-		Log.info(("Setting name to: "), name);
+		Log.infoln(("\tSetting name to: %s "), name);
 		this->name = name;
 	}
 	String getName()
@@ -74,7 +75,7 @@ public:
 	}
 	void setDni(String dni)
 	{
-		Log.info(("Setting dni to: "), dni);
+		Log.infoln(("\tSetting dni to: %s "), dni);
 		this->dni = dni;
 	}
 	String getDni()
@@ -83,7 +84,8 @@ public:
 	}
 	void setClearanceLevel(int clearanceLevel)
 	{
-		Log.info(("Setting clearanceLevel to: "), clearanceLevel);
+		Log.infoln(("\tSetting clearanceLevel to: %d "), clearanceLevel);
+		Serial.println();
 		this->clearanceLevel = clearanceLevel;
 	}
 	int getClearanceLevel()
@@ -92,7 +94,8 @@ public:
 	}
 	void setCargoAdministrativo(String cargoAdministrativo)
 	{
-		Log.info(("Setting cargoAdministrativo to: "), cargoAdministrativo);
+		Log.infoln(("\tSetting cargoAdministrativo to: %s "), cargoAdministrativo);
+		Serial.println();
 		this->cargoAdministrativo = cargoAdministrativo;
 	}
 	String getCargoAdministrativo()
@@ -105,7 +108,8 @@ int Empleado::cuentaEmpleados = 0;
 // std::vector<Empleado> Empleados;
 // Un array de empleados para almacenar múltiples empleados
 // TODO cambiarlo por un vector
-Empleado misEmpleados[20];
+// Empleado misEmpleados[20];
+Empleado miEmpleado;
 
 // --------------- Variables del MFRC552 -------------------#
 // key es una variable que se va a usar a lo largo de todo el codigo
@@ -122,8 +126,7 @@ String getUserStringSerialInput()
 	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
 
 	String userInput = Serial.readStringUntil('*');
-	Serial.print("I received: ");
-	Serial.println(userInput);
+	Log.infoln("Received the input: %s", userInput);
 	return userInput;
 }
 
@@ -134,7 +137,8 @@ void createEmployee()
 	//		getUserStringSerialInput(),
 	//		4,
 	//		getUserStringSerialInput());
-	misEmpleados[0] = Empleado(
+	// misEmpleados[0] = Empleado(
+	miEmpleado = Empleado(
 		getUserStringSerialInput(),
 		getUserStringSerialInput(),
 		4,
@@ -287,7 +291,8 @@ void loop()
 	} else if (op == 2) {
 		// leer info del primer empleado
 		Serial.print("\nThe employee name is: ");
-		Serial.print(misEmpleados[0].getName());
+		// Serial.print(misEmpleados[0].getName());
+		Serial.print(miEmpleado.getName());
 	}
 
 	else {

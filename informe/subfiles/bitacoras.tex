@@ -255,6 +255,25 @@
 \begin{itemize}
 	\item Agregue la licencia al informe, ahora me voy a poner a trabajar en la documentacion
 	      del ESP32
+	\item Hice una branch nueva en git, para poder trabajar en esta librería.
+	      \url{https://github.com/esphome/ESPAsyncWebServer}. La idea sería usar esta
+	      librería para poder hacer la configuración
+\end{itemize}
+
+\subsubsection{08/04/2022}
+\begin{itemize}
+	\item No me anda el constructor, no llegan los parametros.
+	      Para mi tiene que ver con el hecho de que estoy teniendo un constructor vacío para
+	      que ande el array, voy a probar a laburar sin el array a ver que es lo que pasa.
+	\item Sino lo que se me ocurrió es abandonar el constructor y pasarme a
+	      usar los setters directamente
+	\item Me acabo de fijar, me parece que lo que no anda no es el constructor,
+	      sino la libreria de logging, no me aparecen las variables
+	\item Ya se por qué no andaba, me olvidé de leer la documentación.
+	      Log.info() funciona como printf, hay que declarar el formato
+	      de la misma forma que printf lo hace.
+	      Entonces, me habia olvidado de los \%s.
+	      Tambien, dentro del Log.info("cosas a printear" CR), CR significa "\n"
 \end{itemize}
 
 
