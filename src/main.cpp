@@ -121,29 +121,37 @@ int Empleado::cuentaEmpleados = 0;
 // Empleado misEmpleados[20];
 Empleado miEmpleado;
 
+//------------------ INICIO DE Configuracion de conexion a internet ----------------
 const char* ssid = "TeleCentro-882b"; // Nombre de la red
 const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
 AsyncWebServer server(80); // Inicio el web server en el puerto 80
+// ----------------- FIN DE Configuracion de conexion a internet ------------------
 
-// --------------- Cosas para conmseguir la Hora -------------------------
-
+// ----------------- INICIO DE Configuracion de servidor NTP -------------------
+// Un servidor NTP es un servidor que se encarga de obtener la fecha y hora actual
 const char* ntpServer = "pool.ntp.org"; // NTP server pool
-const long gmtOffset_sec = 0;
-const int daylightOffset_sec = 3600;
+const long gmtOffset_sec = 0; // GMT offset in seconds
+const int daylightOffset_sec = 3600; // daylight saving offset in seconds
+// -------------- FIN DE Configuracion de servidor NTP -------------------
 
-// ------------------------------------------------------------------------
-
-// --------------- Variables del MFRC552 -------------------#
+//  ---------------- INICIO DE Variables del MFRC552 ---------------------
 // key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
 // Status es el codigo de estado de autenticacion
 MFRC522::StatusCode status;
 // Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
-// --------------- FIN DE Variables del MFRC552 -------------------#
+// ----------------- FIN DE Variables del MFRC552 ---------------------
 
 String getDateTime()
 {
+	/*
+	Esta funcion retorna la fecha y hora en el formato: dd/mm/yyyy hh:mm:ss
+	Args:
+		None
+	Returns:
+		String con la fecha y hora
+	*/
 	time_t now = time(nullptr);
 	struct tm* timeinfo = localtime(&now);
 	char buffer[80];
@@ -151,8 +159,15 @@ String getDateTime()
 	return buffer;
 }
 
-String getUserStringSerialInput()
+String getSerialStringInput()
 {
+	/*
+	Esta funcion retorna una cadena con el nombre del usuario que se esta ingresando en el Serial
+	Args:
+		None
+	Returns:
+		String con lo introducido por Serial
+	*/
 	Serial.setTimeout(30000L); // 30 segundos de timeout
 	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
 	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
@@ -162,22 +177,36 @@ String getUserStringSerialInput()
 
 void createEmployee()
 {
+	/*
+	Esta funcion crea un empleado en la lista de empleados
+	Args:
+		None
+	Returns:
+		None
+	*/
 	//	Empleado* temp = new Empleado(
-	//		getUserStringSerialInput(),
-	//		getUserStringSerialInput(),
+	//		getSerialStringInput(),
+	//		getSerialStringInput(),
 	//		4,
-	//		getUserStringSerialInput());
+	//		getSerialStringInput());
 	// misEmpleados[0] = Empleado(
 	miEmpleado = Empleado( // Creo un empleado
-		getUserStringSerialInput(), // Nombre
-		getUserStringSerialInput(), // DNI
+		getSerialStringInput(), // Nombre
+		getSerialStringInput(), // DNI
 		4, // Nivel de autorizacion
-		getUserStringSerialInput()); // Cargo administrativo
+		getSerialStringInput()); // Cargo administrativo
 }
 
-String getUID() //
-// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
+String getUID()
 {
+	/*
+	Esta funcion retorna el UID del tag que se esta leyendo
+	Args:
+		None
+	Returns:
+		String con el UID del tag
+	*/
+	// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
 	String content = "";
 	for (byte i = 0; i < mfrc522.uid.size; i++) {
 		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
@@ -191,8 +220,13 @@ String getUID() //
 void readingData()
 {
 	/*
-	Esta funcion lee la data del tag RFID
+	Esta funcion lee los datos del tag que se esta leyendo, y los imprime en el Serial
+	Args:
+		None
+	Returns:
+		None
 	*/
+
 	// Imprime la información técnica del tag
 	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
 
@@ -257,6 +291,14 @@ void readingData()
 
 int menu()
 {
+	/*
+	Esta funcion imprime el menu en el Serial
+	Args:
+		None
+	Returns:
+		int con la opcion elegida por el usuario
+	*/
+
 	//  TODO: Reemplazar una parte de los contenidos de esta funcion
 	//   con un llamado a getUserSerialInput
 	Serial.println(F("\nElige una opcion"));
@@ -373,6 +415,13 @@ const char index_html[] PROGMEM = R"rawliteral(
 
 String processor(const String& var)
 {
+	/*
+	Esta funcion procesa las variables que se encuentran en el index.html
+	Args:
+		var: String con la variable a procesar
+	Returns:
+		String con el valor de la variable procesada
+	*/
 	// Estos consiguiendo x... estan para testear nomas, en realidad no consiguen nada,
 	// estan para que no se me buggee el cerebro mientras entiendo AJAX
 	Serial.println(var);
@@ -399,29 +448,33 @@ void setup()
 	delay(1000);
 	digitalWrite(LED_BUILTIN, LOW);
 
-	// Connect to Wi-Fi
+	// Me conecto a internet mediante Wi-Fi
 	WiFi.begin(ssid, password);
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(1000);
 		Serial.println("Connecting to WiFi..");
 	}
-
-	// Print ESP32 Local IP Address
+	// Imprimo la IP local del ESP32 (192.168.x.x)
 	Serial.println(WiFi.localIP());
 
-	// Route for root / web page
+	// --------------- INICIO DE Rutas del servidor -----------------
+	// Ruta para el index.html
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/html", index_html, processor);
 	});
+	// Ruta para la temperatura
 	server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
+	// Ruta para la humedad
 	server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
+	// Ruta para la fecha y hora
 	server.on("/date-hour", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(getDateTime()).c_str());
 	});
+	// ---------------- FIN DE Rutas del servidor -------------------
 	server.begin();
 
 	// Cosas del ntp server para la fecha/hora
