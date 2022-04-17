@@ -142,17 +142,13 @@ MFRC522::StatusCode status;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 // --------------- FIN DE Variables del MFRC552 -------------------#
 
-String getHour()
+String getDateTime()
 {
-	// no tengo idea de si esto anda todavia
-	struct tm timeinfo;
-	if (!getLocalTime(&timeinfo)) {
-		Serial.println("Failed to obtain time");
-		return "";
-	}
-	char timeHour[10];
-	strftime(timeHour, 3, "%H", &timeinfo);
-	return timeHour;
+	time_t now = time(nullptr);
+	struct tm* timeinfo = localtime(&now);
+	char buffer[80];
+	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
+	return buffer;
 }
 
 String getUserStringSerialInput()
@@ -318,7 +314,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 		</style>
 	</head>
 	<body>
-		<h2>ESP32 DHT Server</h2>
+		<h2>ESP32 Librepass WebServer</h2>
 		<p>
 			<i class="fas fa-thermometer-half" style="color: #059e8a"></i>
 			<span class="dht-labels">Temperature is: </span>
@@ -331,6 +327,11 @@ const char index_html[] PROGMEM = R"rawliteral(
 			<span id="humidity">%HUMIDITY%</span>
 			<sup class="units">&percnt;</sup>
 		</p>
+		<p>
+			<i class="fa-solid fa-clock"></i>
+			<span class="dht-labels">Date and hour is: </span>
+			<span id="date-hour">%DATE-HOUR%</span>
+		</p>
 	</body>
 	<script>
 		setInterval(function () {
@@ -340,11 +341,10 @@ const char index_html[] PROGMEM = R"rawliteral(
 					document.getElementById("temperature").innerHTML = this.responseText;
 				}
 			};
-			xhttp.open("GET", "/temperature", true);
+			xhttp.open("GET", "/temperature", true); //esto llama al server.on() correspondiente
 			console.log("Updating temperature");
 			xhttp.send();
-		}, 10000);
-
+		}, 3000);
 		setInterval(function () {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function () {
@@ -352,12 +352,24 @@ const char index_html[] PROGMEM = R"rawliteral(
 					document.getElementById("humidity").innerHTML = this.responseText;
 				}
 			};
-			xhttp.open("GET", "/humidity", true);
+			xhttp.open("GET", "/humidity", true); //esto llama al server.on() correspondiente
 			console.log("updating humidity");
 			xhttp.send();
-		}, 10000);
+		}, 3000);
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("date-hour").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/date-hour", true); //esto llama al server.on() correspondiente
+			console.log("updating date-hour");
+			xhttp.send();
+		}, 3000);
 	</script>
-</html>)rawliteral";
+</html>
+)rawliteral";
 
 String processor(const String& var)
 {
@@ -368,8 +380,10 @@ String processor(const String& var)
 		return String("Consiguiendo temperatura...");
 	} else if (var == "HUMIDITY") {
 		return String("Consiguiendo humedad...");
+	} else if (var == "HOUR") {
+		return String("Consiguiendo hora...");
 	} else {
-		return "hola";
+		return String("");
 	}
 }
 
@@ -400,20 +414,21 @@ void setup()
 		request->send_P(200, "text/html", index_html, processor);
 	});
 	server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest* request) {
-		request->send_P(200, "text/plain", String("10").c_str());
+		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
 	server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
-	// server.on("/hour", HTTP_GET, [](AsyncWebServerRequest* request) {
-	//	request->send_P(200, "text/plain", String(getHour()).c_str());
-	// });
+	server.on("/date-hour", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(getDateTime()).c_str());
+	});
 	server.begin();
 
+	// Cosas del ntp server para la fecha/hora
+	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	// Inicio el MFRC552
 	mfrc522.PCD_Init();
 	// Le pido al usuario que acerque el tag RFID
-	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	Serial.println(F("Acerca tu tarjeta RFID\n"));
 }
 

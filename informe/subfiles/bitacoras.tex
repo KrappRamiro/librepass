@@ -309,6 +309,18 @@
 	      que cometo este error: processor se llama cuando te conectas a la pagina web,
 	      y el JavaScript se llama con los intervals, son dos cosas separadas
 
+	\item Una nueva cosa en la lista de errores estupidos, haciendo el codigo de la hora,
+	      al copypastear parte de sistema de intervals en JavaScript, me olvide de cambiar el valor de getElementById("humedad") por getElementById("hora"), y eso
+	      hacía que:
+	      \begin{enumerate}
+		      \item Hora se quedara en ``Consiguiendo hora...''
+		      \item humidity se seteara en 16, y cada vez que la humedad se queria actualizar,
+		            tiraba un pequeño flash del otro valor, para inmediatamente cambiar
+		            al valor de getHour(). Fue por esto que me di cuenta de que el
+		            problema era el valor que puse en getElementById()
+	      \end{enumerate}
+
+
 \end{itemize}
 
 
