@@ -1,31 +1,44 @@
-/*
- */
-
 #include <Arduino.h>
+#include <ArduinoLog.h>
+#include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
+#include <SPI.h> //library responsible for communicating of SPI bus
 #include <iostream>
+#include <time.h>
 #include <vector>
 
+#ifdef ESP32
+#include <AsyncTCP.h>
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#endif
+#include <ESPAsyncWebServer.h>
+
+#define SS_PIN 5
+#define RST_PIN 21
+#define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
+// Por que es 18? Porque son 16 bytes de los datos del tag, y 2 bytes de checksum
+#define MAX_SIZE_BLOCK 16
+#define greenPin 12
+#define redPin 32
 /* Se usa std::vector en reemplazo de usar `using namespace std` por una muy
 buena razon, y es que se evita el namespace pollution. Si no sabes qué es eso,
 te recomiendo personalmente este post,  es corto, sencillo, y bien explicado
 para principiantes:
 https://www.thecrazyprogrammer.com/2021/01/better-alternatives-for-using-namespace-std-in-c.html
 */
-using std::vector;
-
-/*
-	Si alguien se pregunta por qué, en las clases, las variables estan en private,
-	la respuesta es muy sencilla:
-	Es porque no se desea que se modifiquen las variables de forma manual.
-	Esto es porque esa práctica es propensa a errores, ya que se podría introducir
-	un valor inadecuado y generar algun problema.
-
-	Por eso se usan funciones public, normalmente llamadas setters, que permiten
-	asignar y leer los valores, y que establecen un margen de valores seguros.
-*/
-
-/*
 class Empleado {
+	/*
+		Si alguien se pregunta por qué, en las clases, las variables estan en private,
+		la respuesta es muy sencilla:
+		Es porque no se desea que se modifiquen las variables de forma manual.
+		Esto es porque esa práctica es propensa a errores, ya que se podría introducir
+		un valor inadecuado y generar algun problema.
+
+		Por eso se usan funciones public, normalmente llamadas setters, que permiten
+		asignar y leer los valores, y que establecen un margen de valores seguros.
+	*/
 private:
 	String name;
 	bool isAlive = true;
@@ -34,61 +47,174 @@ private:
 	String cargoAdministrativo;
 
 public:
+	static int cuentaEmpleados;
+	// Constructor lleno
+	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
+	{
+		Log.infoln("Creando empleado con los siguientes valores: ");
+		cuentaEmpleados++;
+		setName(name);
+		setDni(dni);
+		setClearanceLevel(clearanceLevel);
+		setCargoAdministrativo(cargoAdministrativo);
+	}
+	// Constructor vacio
+	Empleado() { cuentaEmpleados++; }
+
+	// Destructor
+	~Empleado()
+	{
+		cuentaEmpleados--;
+	}
 	void setLifeStatus(bool lifeStatus)
 	{
 		this->isAlive = lifeStatus;
 	}
+	bool getLifeStatus()
+	{
+		return isAlive;
+	}
 	void setName(String name)
 	{
+		Log.infoln(("\tSetting name to: %s "), name);
 		this->name = name;
 	}
-	void setName(String dni)
+	String getName()
 	{
+		return name;
+	}
+	void setDni(String dni)
+	{
+		Log.infoln(("\tSetting dni to: %s "), dni);
 		this->dni = dni;
 	}
-	void setName(int clearanceLevel)
+	String getDni()
 	{
+		return dni;
+	}
+	void setClearanceLevel(int clearanceLevel)
+	{
+		Log.infoln(("\tSetting clearanceLevel to: %d "), clearanceLevel);
+		Serial.println();
 		this->clearanceLevel = clearanceLevel;
 	}
-	void setName(String cargoAdministrativo)
+	int getClearanceLevel()
 	{
+		return clearanceLevel;
+	}
+	void setCargoAdministrativo(String cargoAdministrativo)
+	{
+		Log.infoln(("\tSetting cargoAdministrativo to: %s "), cargoAdministrativo);
+		Serial.println();
 		this->cargoAdministrativo = cargoAdministrativo;
 	}
+	String getCargoAdministrativo()
+	{
+		return cargoAdministrativo;
+	}
 };
-*/
+int Empleado::cuentaEmpleados = 0;
 
-#include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
-#include <SPI.h> //library responsible for communicating of SPI bus
-#define SS_PIN 21
-#define RST_PIN 22
-#define SIZE_BUFFER 18
-#define MAX_SIZE_BLOCK 16
-#define greenPin 12
-#define redPin 32
-// used in authentication
+// std::vector<Empleado> Empleados;
+// Un array de empleados para almacenar múltiples empleados
+// TODO cambiarlo por un vector
+// Empleado misEmpleados[20];
+Empleado miEmpleado;
+
+const char* ssid = "TeleCentro-882b"; // Nombre de la red
+const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
+AsyncWebServer server(80); // Inicio el web server en el puerto 80
+
+// --------------- Cosas para conmseguir la Hora -------------------------
+
+const char* ntpServer = "pool.ntp.org"; // NTP server pool
+const long gmtOffset_sec = 0;
+const int daylightOffset_sec = 3600;
+
+// ------------------------------------------------------------------------
+
+// --------------- Variables del MFRC552 -------------------#
+// key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
-// authentication return status code
+// Status es el codigo de estado de autenticacion
 MFRC522::StatusCode status;
-// Defined pins to module RC522
+// Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+// --------------- FIN DE Variables del MFRC552 -------------------#
 
-// reads data from card/tag
+String getDateTime()
+{
+	time_t now = time(nullptr);
+	struct tm* timeinfo = localtime(&now);
+	char buffer[80];
+	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
+	return buffer;
+}
+
+String getUserStringSerialInput()
+{
+	Serial.setTimeout(30000L); // 30 segundos de timeout
+	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
+	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
+	Log.infoln("Received the input: %s", userInput); // Imprimo el input
+	return userInput; // Devuelvo el input
+}
+
+void createEmployee()
+{
+	//	Empleado* temp = new Empleado(
+	//		getUserStringSerialInput(),
+	//		getUserStringSerialInput(),
+	//		4,
+	//		getUserStringSerialInput());
+	// misEmpleados[0] = Empleado(
+	miEmpleado = Empleado( // Creo un empleado
+		getUserStringSerialInput(), // Nombre
+		getUserStringSerialInput(), // DNI
+		4, // Nivel de autorizacion
+		getUserStringSerialInput()); // Cargo administrativo
+}
+
+String getUID() //
+// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
+{
+	String content = "";
+	for (byte i = 0; i < mfrc522.uid.size; i++) {
+		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+		content.concat(String(mfrc522.uid.uidByte[i], HEX));
+	}
+	content.toUpperCase();
+	String theUID = content.substring(1);
+	return theUID;
+}
+
 void readingData()
 {
-	// prints the technical details of the card/tag
+	/*
+	Esta funcion lee la data del tag RFID
+	*/
+	// Imprime la información técnica del tag
 	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
 
-	// prepare the key - all keys are set to FFFFFFFFFFFFh
+	// Prepara la key, todas las keys estan seteadas a ser FFFFFFFFFFFFh
 	for (byte i = 0; i < 6; i++)
 		key.keyByte[i] = 0xFF;
 
-	// buffer for read data
+	// Preparo un buffer para la lectura de informacion.
+	// El tamaño del buffer depende de SIZE_BUFFER, es un #define que esta en la parte de arriba
 	byte buffer[SIZE_BUFFER] = { 0 };
 
-	// the block to operate
+	// Defino en que bloque del tag voy a estar trabajando
 	byte block = 1;
-	byte size = SIZE_BUFFER; // authenticates the block to operate
-	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid)); // line 834 of MFRC522.cpp file
+	byte size = SIZE_BUFFER; // size va a ser usado para leer luego el bloque
+
+	// Intenta conectarse con el PICC (Proximity Integrated Circuit Card).
+	// En caso de lograrlo, devuelve STATUS_OK, segun la inea 750 de MFRC552.cpp
+	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid));
+
+	// Intenta comunicarse con el PICC
+	// SI no lo logró, tira el codigo de error y sale de la funcion
+	// Si lo logró, sigue de largo
 	if (status != MFRC522::STATUS_OK) {
 		Serial.print(F("Authentication failed: "));
 		Serial.println(mfrc522.GetStatusCodeName(status));
@@ -98,7 +224,9 @@ void readingData()
 		return;
 	}
 
-	// read data from block
+	// Intenta leer el bloque n del tag
+	// Si no lo logro, tira codigo de error y sale de la funcion
+	// Si lo logró, va al else
 	status = mfrc522.MIFARE_Read(block, buffer, &size);
 	if (status != MFRC522::STATUS_OK) {
 		Serial.print(F("Reading failed: "));
@@ -108,92 +236,33 @@ void readingData()
 		digitalWrite(redPin, LOW);
 		return;
 	} else {
+		Serial.print(F("Reading OK"));
 		digitalWrite(greenPin, HIGH);
 		delay(1000);
 		digitalWrite(greenPin, LOW);
 	}
 
+	// ----- A esta sección de aca solamente se llega despues de que todo salió bien ------//
 	Serial.print(F("\nData from block ["));
+	// Printea el bloque leido
 	Serial.print(block);
 	Serial.print(F("]: "));
 
-	// prints read data
+	// Printea lo que leyó
 	for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
 		Serial.write(buffer[i]);
 	}
-	Serial.println(" ");
+	Serial.println(F(" "));
 }
 
-void writingData()
-{
-
-	// prints thecnical details from of the card/tag
-	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
-
-	// waits 30 seconds dor data entry via Serial
-	Serial.setTimeout(30000L);
-	Serial.println(F("Enter the data to be written with the '#' character at the end \n[maximum of 16 characters]:"));
-
-	// prepare the key - all keys are set to FFFFFFFFFFFFh
-	for (byte i = 0; i < 6; i++)
-		key.keyByte[i] = 0xFF;
-
-	// buffer para armazenamento dos dados que iremos gravar
-	// buffer for storing data to write
-	byte buffer[MAX_SIZE_BLOCK] = "";
-	byte block; // the block to operate
-	byte dataSize; // size of data (bytes)
-
-	// recover on buffer the data from Serial
-	// all characters before chacactere '#'
-	dataSize = Serial.readBytesUntil('#', (char*)buffer, MAX_SIZE_BLOCK);
-	// void positions that are left in the buffer will be filled with whitespace
-	for (byte i = dataSize; i < MAX_SIZE_BLOCK; i++) {
-		buffer[i] = ' ';
-	}
-
-	block = 1; // the block to operate
-	String str = (char*)buffer; // transforms the buffer data in String
-	Serial.println(str);
-
-	// authenticates the block to operate
-	// Authenticate is a command to hability a secure communication
-	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A,
-		block, &key, &(mfrc522.uid));
-
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("PCD_Authenticate() failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	}
-	// else Serial.println(F("PCD_Authenticate() success: "));
-
-	// Writes in the block
-	status = mfrc522.MIFARE_Write(block, buffer, MAX_SIZE_BLOCK);
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("MIFARE_Write() failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	} else {
-		Serial.println(F("MIFARE_Write() success: "));
-		digitalWrite(greenPin, HIGH);
-		delay(1000);
-		digitalWrite(greenPin, LOW);
-	}
-}
-
-// menu to operation choice
 int menu()
 {
-	Serial.println(F("\nChoose an option:"));
-	Serial.println(F("0 - Reading data"));
-	Serial.println(F("1 - Writing data\n"));
+	//  TODO: Reemplazar una parte de los contenidos de esta funcion
+	//   con un llamado a getUserSerialInput
+	Serial.println(F("\nElige una opcion"));
+	Serial.println(F("0 - Leer data"));
+	Serial.println(F("1 - Escribir data\n"));
+	Serial.println(F("2 - leer nombre empleado\n"));
 
 	// waits while the user does not start data
 	while (!Serial.available()) { };
@@ -210,52 +279,197 @@ int menu()
 	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
 }
 
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link
+			rel="stylesheet"
+			href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+			integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+			crossorigin="anonymous"
+		/>
+		<style>
+			html {
+				font-family: Arial;
+				display: inline-block;
+				margin: 0px auto;
+				text-align: center;
+			}
+			h2 {
+				font-size: 3rem;
+			}
+			p {
+				font-size: 3rem;
+			}
+			.units {
+				font-size: 1.2rem;
+			}
+			.dht-labels {
+				font-size: 1.5rem;
+				vertical-align: middle;
+				padding-bottom: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>ESP32 Librepass WebServer</h2>
+		<p>
+			<i class="fas fa-thermometer-half" style="color: #059e8a"></i>
+			<span class="dht-labels">Temperature is: </span>
+			<span id="temperature">%TEMPERATURE%</span>
+			<sup class="units">&deg;C</sup>
+		</p>
+		<p>
+			<i class="fas fa-tint" style="color: #00add6"></i>
+			<span class="dht-labels">Humidity is: </span>
+			<span id="humidity">%HUMIDITY%</span>
+			<sup class="units">&percnt;</sup>
+		</p>
+		<p>
+			<i class="fa-solid fa-clock"></i>
+			<span class="dht-labels">Date and hour is: </span>
+			<span id="date-hour">%DATE-HOUR%</span>
+		</p>
+	</body>
+	<script>
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("temperature").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/temperature", true); //esto llama al server.on() correspondiente
+			console.log("Updating temperature");
+			xhttp.send();
+		}, 3000);
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("humidity").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/humidity", true); //esto llama al server.on() correspondiente
+			console.log("updating humidity");
+			xhttp.send();
+		}, 3000);
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("date-hour").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/date-hour", true); //esto llama al server.on() correspondiente
+			console.log("updating date-hour");
+			xhttp.send();
+		}, 3000);
+	</script>
+</html>
+)rawliteral";
+
+String processor(const String& var)
+{
+	// Estos consiguiendo x... estan para testear nomas, en realidad no consiguen nada,
+	// estan para que no se me buggee el cerebro mientras entiendo AJAX
+	Serial.println(var);
+	if (var == "TEMPERATURE") {
+		return String("Consiguiendo temperatura...");
+	} else if (var == "HUMIDITY") {
+		return String("Consiguiendo humedad...");
+	} else if (var == "HOUR") {
+		return String("Consiguiendo hora...");
+	} else {
+		return String("");
+	}
+}
+
 void setup()
 {
 	Serial.begin(9600);
-	SPI.begin(); // Init SPI bus
-	pinMode(greenPin, OUTPUT);
-	pinMode(redPin, OUTPUT);
+	SPI.begin(); // Inicio el bus SPI
+	Log.begin(LOG_LEVEL_NOTICE, &Serial); // Inicio del sistema de logging
 
-	digitalWrite(greenPin, HIGH);
-	digitalWrite(redPin, HIGH);
-	delay(500);
-	digitalWrite(greenPin, LOW);
-	digitalWrite(redPin, LOW);
+	// Prendo el led de la placa cuando inicia el sistema
+	pinMode(LED_BUILTIN, OUTPUT);
+	digitalWrite(LED_BUILTIN, HIGH);
+	delay(1000);
+	digitalWrite(LED_BUILTIN, LOW);
 
-	// Init MFRC522
+	// Connect to Wi-Fi
+	WiFi.begin(ssid, password);
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(1000);
+		Serial.println("Connecting to WiFi..");
+	}
+
+	// Print ESP32 Local IP Address
+	Serial.println(WiFi.localIP());
+
+	// Route for root / web page
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/html", index_html, processor);
+	});
+	server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
+	});
+	server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
+	});
+	server.on("/date-hour", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(getDateTime()).c_str());
+	});
+	server.begin();
+
+	// Cosas del ntp server para la fecha/hora
+	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+	// Inicio el MFRC552
 	mfrc522.PCD_Init();
-	Serial.println("Approach your reader card...");
-	Serial.println();
+	// Le pido al usuario que acerque el tag RFID
+	Serial.println(F("Acerca tu tarjeta RFID\n"));
 }
 
 void loop()
 {
-	// Aguarda a aproximacao do cartao
-	// waiting the card approach
+	// Se espera a que se acerque un tag
 	if (!mfrc522.PICC_IsNewCardPresent()) {
 		return;
 	}
-	// Select a card
+	// Se espera a que se lean los datos
 	if (!mfrc522.PICC_ReadCardSerial()) {
 		return;
 	}
+	// Descomentar solamente si se quiere Dumpear toda la info acerca de la tarjeta leida
+	// Ojo que llama automaticamente a PICC_HaltA()
+	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 
-	// Dump debug info about the card; PICC_HaltA() is automatically called
-	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));</p><p> //call menu function and retrieve the desired option
+	// LLama a la funcion de menu para que el usuario elija una opcion
 	int op = menu();
-
 	if (op == 0)
 		readingData();
-	else if (op == 1)
-		writingData();
+	else if (op == 1) {
+		// crear empleado
+		createEmployee();
+	} else if (op == 2) {
+		// leer info del primer empleado
+		Serial.print("\nThe employee name is: ");
+		// Serial.print(misEmpleados[0].getName());
+		Serial.print(miEmpleado.getName());
+	}
+
 	else {
 		Serial.println(F("Incorrect Option!"));
 		return;
 	}
 
-	// instructs the PICC when in the ACTIVE state to go to a "STOP" state
+	// Le dice al PICC que se vaya a un estado de STOP cuando esta activo (o sea, lo haltea)
 	mfrc522.PICC_HaltA();
-	// "stop" the encryption of the PCD, it must be called after communication with authentication, otherwise new communications can not be initiated
+
+	// Esto "para" la encriptación del PCD (proximity coupling device).
+	// Tiene que ser llamado si o si despues de la comunicacion con una
+	// autenticación exitosa, en otro caso no se va a poder iniciar otra comunicación.
 	mfrc522.PCD_StopCrypto1();
 }
