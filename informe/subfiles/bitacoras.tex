@@ -273,7 +273,42 @@
 	      Log.info() funciona como printf, hay que declarar el formato
 	      de la misma forma que printf lo hace.
 	      Entonces, me habia olvidado de los \%s.
-	      Tambien, dentro del Log.info("cosas a printear" CR), CR significa "\n"
+	      Tambien, dentro del Log.info("cosas a printear" CR), CR significa "\textbackslash n"
+	\item Hice un merge de la branch dev-webserver hacia la branch dev
+\end{itemize}
+
+\subsubsection{16/04/2022}
+\begin{itemize}
+	\item Hace un tiempo que no trabajaba en el proyecto y ya me estaba poniendo nervioso,
+	      asi que hoy me puse a trabajar en el tema webserver.
+	      Para ello, me guié de estas páginas:
+	      \begin{itemize}
+		      \item \url{https://randomnerdtutorials.com/esp32-dht11-dht22-temperature-humidity-web-server-arduino-ide/}
+		      \item \url{https://www.w3schools.com/XML/ajax_xmlhttprequest_response.asp}
+		      \item \url{https://techtutorialsx.com/2018/07/23/esp32-arduino-http-server-template-processing-with-multiple-placeholders/}
+	      \end{itemize}
+
+	\item En base a esto, logre hacer una pagina web que muestre dos valores,
+	      humedad y temperatura (ambos conseguidos usando String(random())) y que se
+	      actualizen cada 10 segundos \textbf{sin tener que recargar la página.}.
+	      Por lo tanto, puedo decir que conseguí un webserver que funciona usando AJAX.
+
+	      Lo que habría que hacer es que ande con valores de verdad, como la UID
+	      de la tarjeta, y que funcione con eventos, y no intervalos.
+
+	\item Leyendo un poco más de la documentacion de ESPAsyncWebServer, me doy
+	      cuenta que los eventos los tendría que armar en c++, y no en el JavaScript
+	      del documento HTML. De todas formas, parece haber un plugin para eventos,
+	      \url{https://github.com/me-no-dev/ESPAsyncWebServer#async-event-source-plugin}
+
+	\item Para ir practicando un poco el tema del AJAX, voy a probar poniendo
+	      un <p> en la página que me tire la hora. Me voy a ayudar de esta guía
+	      \url{https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/}
+
+	\item Antes de que me olvide, me lo voy a anotar, porque no es la primera vez
+	      que cometo este error: processor se llama cuando te conectas a la pagina web,
+	      y el JavaScript se llama con los intervals, son dos cosas separadas
+
 \end{itemize}
 
 
