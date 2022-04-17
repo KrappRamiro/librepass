@@ -3,7 +3,18 @@
 #include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
 #include <SPI.h> //library responsible for communicating of SPI bus
 #include <iostream>
+#include <time.h>
 #include <vector>
+
+#ifdef ESP32
+#include <AsyncTCP.h>
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#endif
+#include <ESPAsyncWebServer.h>
+
 #define SS_PIN 5
 #define RST_PIN 21
 #define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
@@ -41,7 +52,6 @@ public:
 	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
 	{
 		Log.infoln("Creando empleado con los siguientes valores: ");
-
 		cuentaEmpleados++;
 		setName(name);
 		setDni(dni);
@@ -111,6 +121,18 @@ int Empleado::cuentaEmpleados = 0;
 // Empleado misEmpleados[20];
 Empleado miEmpleado;
 
+const char* ssid = "TeleCentro-882b"; // Nombre de la red
+const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
+AsyncWebServer server(80); // Inicio el web server en el puerto 80
+
+// --------------- Cosas para conmseguir la Hora -------------------------
+
+const char* ntpServer = "pool.ntp.org"; // NTP server pool
+const long gmtOffset_sec = 0;
+const int daylightOffset_sec = 3600;
+
+// ------------------------------------------------------------------------
+
 // --------------- Variables del MFRC552 -------------------#
 // key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
@@ -120,14 +142,22 @@ MFRC522::StatusCode status;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 // --------------- FIN DE Variables del MFRC552 -------------------#
 
+String getDateTime()
+{
+	time_t now = time(nullptr);
+	struct tm* timeinfo = localtime(&now);
+	char buffer[80];
+	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
+	return buffer;
+}
+
 String getUserStringSerialInput()
 {
-	Serial.setTimeout(30000L);
+	Serial.setTimeout(30000L); // 30 segundos de timeout
 	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
-
-	String userInput = Serial.readStringUntil('*');
-	Log.infoln("Received the input: %s", userInput);
-	return userInput;
+	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
+	Log.infoln("Received the input: %s", userInput); // Imprimo el input
+	return userInput; // Devuelvo el input
 }
 
 void createEmployee()
@@ -138,14 +168,14 @@ void createEmployee()
 	//		4,
 	//		getUserStringSerialInput());
 	// misEmpleados[0] = Empleado(
-	miEmpleado = Empleado(
-		getUserStringSerialInput(),
-		getUserStringSerialInput(),
-		4,
-		getUserStringSerialInput());
+	miEmpleado = Empleado( // Creo un empleado
+		getUserStringSerialInput(), // Nombre
+		getUserStringSerialInput(), // DNI
+		4, // Nivel de autorizacion
+		getUserStringSerialInput()); // Cargo administrativo
 }
 
-String getUID()
+String getUID() //
 // conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
 {
 	String content = "";
@@ -249,6 +279,114 @@ int menu()
 	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
 }
 
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link
+			rel="stylesheet"
+			href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+			integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+			crossorigin="anonymous"
+		/>
+		<style>
+			html {
+				font-family: Arial;
+				display: inline-block;
+				margin: 0px auto;
+				text-align: center;
+			}
+			h2 {
+				font-size: 3rem;
+			}
+			p {
+				font-size: 3rem;
+			}
+			.units {
+				font-size: 1.2rem;
+			}
+			.dht-labels {
+				font-size: 1.5rem;
+				vertical-align: middle;
+				padding-bottom: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>ESP32 Librepass WebServer</h2>
+		<p>
+			<i class="fas fa-thermometer-half" style="color: #059e8a"></i>
+			<span class="dht-labels">Temperature is: </span>
+			<span id="temperature">%TEMPERATURE%</span>
+			<sup class="units">&deg;C</sup>
+		</p>
+		<p>
+			<i class="fas fa-tint" style="color: #00add6"></i>
+			<span class="dht-labels">Humidity is: </span>
+			<span id="humidity">%HUMIDITY%</span>
+			<sup class="units">&percnt;</sup>
+		</p>
+		<p>
+			<i class="fa-solid fa-clock"></i>
+			<span class="dht-labels">Date and hour is: </span>
+			<span id="date-hour">%DATE-HOUR%</span>
+		</p>
+	</body>
+	<script>
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("temperature").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/temperature", true); //esto llama al server.on() correspondiente
+			console.log("Updating temperature");
+			xhttp.send();
+		}, 3000);
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("humidity").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/humidity", true); //esto llama al server.on() correspondiente
+			console.log("updating humidity");
+			xhttp.send();
+		}, 3000);
+		setInterval(function () {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("date-hour").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "/date-hour", true); //esto llama al server.on() correspondiente
+			console.log("updating date-hour");
+			xhttp.send();
+		}, 3000);
+	</script>
+</html>
+)rawliteral";
+
+String processor(const String& var)
+{
+	// Estos consiguiendo x... estan para testear nomas, en realidad no consiguen nada,
+	// estan para que no se me buggee el cerebro mientras entiendo AJAX
+	Serial.println(var);
+	if (var == "TEMPERATURE") {
+		return String("Consiguiendo temperatura...");
+	} else if (var == "HUMIDITY") {
+		return String("Consiguiendo humedad...");
+	} else if (var == "HOUR") {
+		return String("Consiguiendo hora...");
+	} else {
+		return String("");
+	}
+}
+
 void setup()
 {
 	Serial.begin(9600);
@@ -261,6 +399,33 @@ void setup()
 	delay(1000);
 	digitalWrite(LED_BUILTIN, LOW);
 
+	// Connect to Wi-Fi
+	WiFi.begin(ssid, password);
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(1000);
+		Serial.println("Connecting to WiFi..");
+	}
+
+	// Print ESP32 Local IP Address
+	Serial.println(WiFi.localIP());
+
+	// Route for root / web page
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/html", index_html, processor);
+	});
+	server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
+	});
+	server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
+	});
+	server.on("/date-hour", HTTP_GET, [](AsyncWebServerRequest* request) {
+		request->send_P(200, "text/plain", String(getDateTime()).c_str());
+	});
+	server.begin();
+
+	// Cosas del ntp server para la fecha/hora
+	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	// Inicio el MFRC552
 	mfrc522.PCD_Init();
 	// Le pido al usuario que acerque el tag RFID
