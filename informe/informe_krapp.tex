@@ -18,6 +18,7 @@
 \usepackage{subfiles}							% paquete para hacer subfiles
 \usepackage{csquotes}							% lo necesita biblatex
 \usepackage{subcaption}						% para poder hacer subfigures
+\usepackage{multicol}							% para poder meter columnas
 
 
 % ------------------------------------------------------- %
@@ -63,23 +64,24 @@
 
 %-------------- Formatos de los titulos --------------%
 \newcommand{\sectionbreak}{\clearpage}
+\newcommand{\subsectionbreak}{\clearpage}
 \titleformat{\section}
-	{\bfseries \huge}
+	{\bfseries \Huge}
 	{}
 	{0em}
-	{\thesection. }[\titlerule]
+	{\thesection.  }[\titlerule]
 
 \titleformat{\subsection}
-	{\bfseries \Large}
+	{\bfseries \LARGE}
 	{}
 	{0em}
 	{\thesubsection.  }
 
 \titleformat{\subsubsection}
-	{\bfseries \large}
+	{\bfseries \Large}
 	{}
 	{0em}
-	{}
+	{\thesubsubsection.  }
 
 \titlespacing{\section} %me permite controlar el espaciado de la seccion que le indico
 	{0em}

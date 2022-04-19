@@ -1,3 +1,4 @@
+// TODO: Para hacer eventos, tengo que usar POST, no GET
 #include <Arduino.h>
 #include <ArduinoLog.h>
 #include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
