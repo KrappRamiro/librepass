@@ -86,7 +86,7 @@ el master deberá reconfigurarse cada vez que se desee comunicar con cada dispos
 \end{figure}
 
 \subsubsection{Ventajas}
-Segun \cite{wikipedia_spi}:
+Segun Wikipedia\cite{wikipedia_spi}:
 \begin{itemize}
 	\item Comunicación Full Duplex
 	\item Mayor velocidad de transmisión que con I²C o SMBus
@@ -166,6 +166,7 @@ para WiFi, Bluetooth, Ethernet y Low-Power
 		cabe recordar que los pines GPIO 6-11 estan reservados al sistema SPI integrado, y su
 		uso no es recomendado}
 \end{figure}
+\subsubsection{Usabilidad de pines}
 El ESP32 cuenta con una multitud de pines, pero no todos pueden ser usados libremente,
 esto es explicado en la tabla \ref{tabla-pines-esp32} que muestra que pines pueden ser utilizados y cuales no,
 dependiendo de las cirscuntancias.
@@ -597,11 +598,11 @@ el framework provee:
 	\paragraph{Bitwise Operators}
 	\begin{itemize}
 		\item \& (bitwise and)
-		\item << (bitshift left)
-		\item >> (bitshift right)
-		\item \^ (bitwise xor)
+		\item <~<~ (bitshift left)
+		\item >~>~ (bitshift right)
+		\item \^ ~ (bitwise xor)
 		\item | (bitwise or)
-		\item ~ (bitwise not)
+		\item \~~ (bitwise not)
 	\end{itemize}
 
 	\paragraph{Compound Operators}
@@ -611,10 +612,10 @@ el framework provee:
 		\item *= (compound multiplication)
 		\item ++ (increment)
 		\item += (compound addition)
-		\item -- (decrement)
-		\item -= (compound subtraction)
+		\item -~- (decrement)
+		\item -~= (compound subtraction)
 		\item /= (compound division)
-		\item \^= (compound bitwise xor)
+		\item \^~= (compound bitwise xor)
 		\item |= (compound bitwise or)
 	\end{itemize}
 
