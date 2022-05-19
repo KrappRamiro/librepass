@@ -1,3 +1,4 @@
+#include "empleado.h"
 #include "krapp_utils.h"
 #define SS_PIN 5
 #define RST_PIN 21
@@ -15,91 +16,6 @@ https://www.thecrazyprogrammer.com/2021/01/better-alternatives-for-using-namespa
 const char* PARAM_INPUT_1 = "input1";
 const char* PARAM_INPUT_2 = "input2";
 const char* PARAM_INPUT_3 = "input3";
-class Empleado {
-	/*
-		Si alguien se pregunta por qué, en las clases, las variables estan en private,
-		la respuesta es muy sencilla:
-		Es porque no se desea que se modifiquen las variables de forma manual.
-		Esto es porque esa práctica es propensa a errores, ya que se podría introducir
-		un valor inadecuado y generar algun problema.
-
-		Por eso se usan funciones public, normalmente llamadas setters, que permiten
-		asignar y leer los valores, y que establecen un margen de valores seguros.
-	*/
-private:
-	String name;
-	bool isAlive = true;
-	String dni;
-	int clearanceLevel;
-	String cargoAdministrativo;
-
-public:
-	static int cuentaEmpleados;
-	// Constructor lleno
-	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
-	{
-		Log.infoln("Creando empleado con los siguientes valores: ");
-		cuentaEmpleados++;
-		setName(name);
-		setDni(dni);
-		setClearanceLevel(clearanceLevel);
-		setCargoAdministrativo(cargoAdministrativo);
-	}
-	// Constructor vacio
-	Empleado() { cuentaEmpleados++; }
-
-	// Destructor
-	~Empleado()
-	{
-		cuentaEmpleados--;
-	}
-	void setLifeStatus(bool lifeStatus)
-	{
-		this->isAlive = lifeStatus;
-	}
-	bool getLifeStatus()
-	{
-		return isAlive;
-	}
-	void setName(String name)
-	{
-		Log.infoln(("\tSetting name to: %s "), name);
-		this->name = name;
-	}
-	String getName()
-	{
-		return name;
-	}
-	void setDni(String dni)
-	{
-		Log.infoln(("\tSetting dni to: %s "), dni);
-		this->dni = dni;
-	}
-	String getDni()
-	{
-		return dni;
-	}
-	void setClearanceLevel(int clearanceLevel)
-	{
-		Log.infoln(("\tSetting clearanceLevel to: %d "), clearanceLevel);
-		Serial.println();
-		this->clearanceLevel = clearanceLevel;
-	}
-	int getClearanceLevel()
-	{
-		return clearanceLevel;
-	}
-	void setCargoAdministrativo(String cargoAdministrativo)
-	{
-		Log.infoln(("\tSetting cargoAdministrativo to: %s "), cargoAdministrativo);
-		Serial.println();
-		this->cargoAdministrativo = cargoAdministrativo;
-	}
-	String getCargoAdministrativo()
-	{
-		return cargoAdministrativo;
-	}
-};
 int Empleado::cuentaEmpleados = 0;
 
 // std::vector<Empleado> Empleados;
@@ -109,11 +25,11 @@ int Empleado::cuentaEmpleados = 0;
 Empleado miEmpleado;
 
 //------------------ INICIO DE Configuracion de conexion a internet ----------------
-// const char* ssid = "Krapp"; // Nombre de la red
-// const char* password = "italodisco"; // Contraseña de la red
+const char* ssid = "Krapp"; // Nombre de la red
+const char* password = "yougotit"; // Contraseña de la red
 
-const char* ssid = "TeleCentro-882b";
-const char* password = "ZGNJVMMHZ2MY";
+// const char* ssid = "TeleCentro-882b";
+// const char* password = "ZGNJVMMHZ2MY";
 
 AsyncWebServer server(80); // Inicio el web server en el puerto 80
 // Create an Event Source on /events

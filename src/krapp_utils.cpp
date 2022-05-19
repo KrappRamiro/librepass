@@ -175,7 +175,7 @@ String processor(const String& var)
 	Returns:
 		String con el valor de el placeholder procesado
 	*/
-	Serial.println(var);
+	Log.info(F("The processor function is processing: %s" CR), var);
 	if (var == "TEMPERATURE") {
 		return String("Consiguiendo temperatura...");
 	} else if (var == "HUMIDITY") {
