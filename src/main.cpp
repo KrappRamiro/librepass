@@ -73,10 +73,8 @@ void createEmployee()
 		4, // Nivel de autorizacion
 		getSerialStringInput()); // Cargo administrativo
 }
+#pragma region // esto es exclusivo de vscode, no afecta al compilador, me permite contraer y expandir
 const char index_html[] = R"rawliteral(
-
-
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -270,11 +268,8 @@ const char index_html[] = R"rawliteral(
 		// ------------------ FIN DE Intervalos ------------------
 	</script>
 </html>
-
-
-
-
 )rawliteral";
+#pragma endregion
 void setup()
 {
 	Serial.begin(9600);
