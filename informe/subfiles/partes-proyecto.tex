@@ -85,11 +85,32 @@ el master deberá reconfigurarse cada vez que se desee comunicar con cada dispos
 	\caption{Grafico de comunicacion SPI}
 \end{figure}
 
-\subsubsection{Ventajas y desventajas}
+\subsubsection{Ventajas}
+Segun Wikipedia\cite{wikipedia_spi}:
+\begin{itemize}
+	\item Comunicación Full Duplex
+	\item Mayor velocidad de transmisión que con I²C o SMBus
+	\item Protocolo flexible en que se puede tener un control absoluto sobre los bits transmitidos
+	\item No está limitado a la transferencia de bloques de 8 bits
+	\item Elección del tamaño de la trama de bits, de su significado y propósito
+	\item Su implementación en hardware es extremadamente simple
+	\item Consume menos energía que I²C o que SMBus debido que posee menos circuitos (incluyendo las resistencias pull-up) y estos son más simples
+	\item No es necesario arbitraje o mecanismo de respuesta ante fallos
+	\item Los dispositivos clientes usan el reloj que envía el servidor, no necesitan por tanto su propio reloj
+	\item No es obligatorio implementar un transceptor (emisor y receptor), un dispositivo conectado puede configurarse para que solo envíe, sólo reciba o ambas cosas a la vez
+	\item Usa mucho menos terminales en cada chip/conector que una interfaz paralelo equivalente
+	\item Como mucho una única señal específica para cada cliente (señal SS), las demás señales pueden ser compartidas
+\end{itemize}
 
-\todo{ventajas y desventajas}
-
-
+\subsubsection{Desventajas}
+\begin{itemize}
+	\item Consume más pines de cada chip que I²C, incluso en la variante de 3 hilos
+	\item El direccionamiento se hace mediante líneas específicas (señalización fuera de banda) a diferencia de lo que ocurre en I²C que se selecciona cada chip mediante una dirección de 7 bits que se envía por las mismas líneas del bus
+	\item No hay control de flujo por hardware
+	\item No hay señal de asentimiento. El servidor podría estar enviando información sin que estuviese conectado ningún cliente y no se daría cuenta de nada
+	\item No permite fácilmente tener varios servidores conectados al bus
+	\item Sólo funciona en las distancias cortas a diferencia de, por ejemplo, RS-232, RS-485, o Bus CAN
+\end{itemize}
 
 
 
@@ -129,15 +150,79 @@ para WiFi, Bluetooth, Ethernet y Low-Power
 	      \end{itemize}
 \end{itemize}
 
+\clearpage
 
+\subsubsection{Pinout}
+\begin{figure}[H]
+	\includegraphics[width=0.85\textwidth]{ESP32-board-30pin-pinout.jpg}
+	\centering
+	\caption{Pinout de la placa de desarrollo DOIT DevKit V1 ESP32 de 30 pines}
+\end{figure}
 
+\begin{figure}[H]
+	\includegraphics[width=0.85\textwidth]{ESP32-board-36pin-pinout.jpg}
+	\centering
+	\caption{Pinout de la placa de desarrollo DOIT DevKit V1 ESP32 de 36 pines,
+		cabe recordar que los pines GPIO 6-11 estan reservados al sistema SPI integrado, y su
+		uso no es recomendado}
+\end{figure}
+\subsubsection{Usabilidad de pines}
+El ESP32 cuenta con una multitud de pines, pero no todos pueden ser usados libremente,
+esto es explicado en la tabla \ref{tabla-pines-esp32} que muestra que pines pueden ser utilizados y cuales no,
+dependiendo de las cirscuntancias.
+
+A la hora de ser usados en el codigo c++ del framework Arduino, simplemente se refieren
+por el numero
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		GPIO & Input     & Output & Notes                                      \\ \hline
+		0    & pulled up & OK     & Hace output de señal PWM al arranque       \\ \hline
+		1    & TX pin    & OK     & debug output al arranque                   \\ \hline
+		2    & OK        & OK     & Conectado al LED\_ONBOARD                  \\ \hline
+		3    & OK        & RX pin & En estado HIGH al arranque                 \\ \hline
+		4    & OK        & OK     & ~                                          \\ \hline
+		5    & OK        & OK     & Hace output de señal PWM al arranque       \\ \hline
+		6    & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		7    & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		8    & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		9    & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		10   & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		11   & x         & x      & Conectado al flash SPI integrado           \\ \hline
+		12   & OK        & OK     & El arranque falla si está pulleado en HIGH \\ \hline
+		13   & OK        & OK     & ~                                          \\ \hline
+		14   & OK        & OK     & Hace output de señal PWM al arranque       \\ \hline
+		15   & OK        & OK     & Hace output de señal PWM al arranque       \\ \hline
+		16   & OK        & OK     & ~                                          \\ \hline
+		17   & OK        & OK     & ~                                          \\ \hline
+		18   & OK        & OK     & ~                                          \\ \hline
+		19   & OK        & OK     & ~                                          \\ \hline
+		21   & OK        & OK     & ~                                          \\ \hline
+		22   & OK        & OK     & ~                                          \\ \hline
+		23   & OK        & OK     & ~                                          \\ \hline
+		25   & OK        & OK     & ~                                          \\ \hline
+		26   & OK        & OK     & ~                                          \\ \hline
+		27   & OK        & OK     & ~                                          \\ \hline
+		32   & OK        & OK     & ~                                          \\ \hline
+		33   & OK        & OK     & ~                                          \\ \hline
+		34   & OK        & x      & Solamente de input                         \\ \hline
+		35   & OK        & x      & Solamente de input                         \\ \hline
+		36   & OK        & x      & Solamente de input                         \\ \hline
+		39   & OK        & x      & Solamente de input                         \\ \hline
+	\end{tabular}
+	\caption{Una tabla con las funciones de cada pin de la placa de desarrollo
+		DOIT DevKit v1 ESP32}
+	\label{tabla-pines-esp32}
+\end{table}
 
 
 
 
 
 \clearpage
-\subsection{RFID}
+\subsection{Sistema RFID}
 Segun Wikipedia\cite{wikipedia_rfid_es}:
 
 \begin{center}
@@ -228,11 +313,11 @@ Este pin sirve para resetear o desactivar el circuito integrado
 Pin de alimentación \textbf{3.3v}
 
 \clearpage
-\subsubsection{Mapeo de Memoria}
+\subsubsection{Mapeo de Memoria del tag RFID}
 La identificación se realiza con unos llaveros o unas tarjetas,
 que tienen este mapeo de memoria:
 
-Tenemos 1k de memoria adentro de este chip, y la memoria EEPROM esta organizada de la
+Tenemos 1k de memoria adentro de este chip, la cual esta organizada de la
 siguiente manera: Hay 16 sectores de 4 bloques, y cada bloque contiene 16 bytes.
 
 \begin{figure}[H]
@@ -240,11 +325,299 @@ siguiente manera: Hay 16 sectores de 4 bloques, y cada bloque contiene 16 bytes.
 	\includegraphics[width=0.7\textwidth]{rfid-mapeo-memoria.png}
 \end{figure}
 
-
-
-
-
-
 \subsection{El Webserver asincrónico}
+Para este proyecto, se usó un sistema de servidor web integrado en el DOIT DevKit V1 ESP32
+\todo{meter captura de la pagina web}
+\todo{meter pedazo de codigo de los server.on, el processor y el javascript}
 
+\subsection{Framework Arduino}
+Para este proyecto, se uso el framework Arduino, que provee una amplia variedad de
+clases, metodos y funciones útiles para el desarrollo en sistemas embebidos.
+Segun la referencia de Arduino\cite{arduino_reference}, estas son las cosas que
+el framework provee:
+
+\begin{multicols}{2}
+	[
+		\subsubsection{Funciones}
+		Para controlar la placa y realizar cómputos
+	]
+	\paragraph{Digital I/O}
+	\begin{itemize}
+		\item digitalRead()
+		\item digitalWrite()
+		\item pinMode()
+	\end{itemize}
+
+	\paragraph{Analog I/O}
+	\begin{itemize}
+		\item analogRead()
+		\item analogReference()
+		\item analogWrite()
+	\end{itemize}
+
+	\paragraph{Zero, Due \& MKR Family}
+	\begin{itemize}
+		\item analogReadResolution()
+		\item analogWriteResolution()
+	\end{itemize}
+
+	\paragraph{Advanced I/O}
+	\begin{itemize}
+		\item noTone()
+		\item pulseIn()
+		\item pulseInLong()
+		\item shiftIn()
+		\item shiftOut()
+		\item tone()
+	\end{itemize}
+
+	\paragraph{Time}
+	\begin{itemize}
+		\item delay()
+		\item delayMicroseconds()
+		\item micros()
+		\item millis()
+	\end{itemize}
+
+	\paragraph{Math}
+	\begin{itemize}
+		\item abs()
+		\item constrain()
+		\item map()
+		\item max()
+		\item min()
+		\item pow()
+		\item sq()
+		\item sqrt()
+	\end{itemize}
+
+	\paragraph{Trigonometry}
+	\begin{itemize}
+		\item cos()
+		\item sin()
+		\item tan()
+	\end{itemize}
+
+	\paragraph{Characters}
+	\begin{itemize}
+		\item isAlpha()
+		\item isAlphaNumeric()
+		\item isAscii()
+		\item isControl()
+		\item isDigit()
+		\item isGraph()
+		\item isHexadecimalDigit()
+		\item isLowerCase()
+		\item isPrintable()
+		\item isPunct()
+		\item isSpace()
+		\item isUpperCase()
+		\item isWhitespace()
+	\end{itemize}
+
+	\paragraph{Random Numbers}
+	\begin{itemize}
+		\item random()
+		\item randomSeed()
+	\end{itemize}
+
+	\paragraph{Bits and Bytes}
+	\begin{itemize}
+		\item bit()
+		\item bitClear()
+		\item bitRead()
+		\item bitSet()
+		\item bitWrite()
+		\item highByte()
+		\item lowByte()
+	\end{itemize}
+
+	\paragraph{External Interrupts}
+	\begin{itemize}
+		\item attachInterrupt()
+		\item detachInterrupt()
+	\end{itemize}
+
+	\paragraph{Interrupts}
+	\begin{itemize}
+		\item interrupts()
+		\item noInterrupts()
+	\end{itemize}
+
+	\paragraph{Communication}
+	\begin{itemize}
+		\item Serial
+		\item SPI
+		\item Stream
+		\item Wire
+	\end{itemize}
+
+	\paragraph{USB}
+	\begin{itemize}
+		\item Keyboard
+		\item Mouse
+	\end{itemize}
+\end{multicols}
+
+\clearpage
+
+\begin{multicols}{2}
+	[
+		\subsubsection{Variables}
+		Tipos de Datos y Constantes definidos en el framework
+	]
+	\paragraph{Constants}
+	\begin{itemize}
+		\item HIGH | LOW
+		\item INPUT | OUTPUT | INPUT\_PULLUP
+		\item LED\_BUILTIN
+		\item true | false
+		\item Floating Point Constants
+		\item Integer Constants
+	\end{itemize}
+
+	\paragraph{Conversion}
+	\begin{itemize}
+		\item (unsigned int)
+		\item (unsigned long)
+		\item byte()
+		\item char()
+		\item float()
+		\item int()
+		\item long()
+		\item word()
+	\end{itemize}
+
+	\paragraph{Data Types}
+	\begin{itemize}
+		\item array
+		\item bool
+		\item boolean
+		\item byte
+		\item char
+		\item double
+		\item float
+		\item int
+		\item long
+		\item short
+		\item size\_t
+		\item string
+		\item String()
+		\item unsigned char
+		\item unsigned int
+		\item unsigned long
+		\item void
+		\item word
+	\end{itemize}
+
+	\paragraph{Variable Scope \& Qualifiers}
+	\begin{itemize}
+		\item const
+		\item scope
+		\item static
+		\item volatile
+	\end{itemize}
+
+	\paragraph{Utilities}
+	\begin{itemize}
+		\item PROGMEM
+		\item sizeof()
+	\end{itemize}
+\end{multicols}
+
+\clearpage
+
+\begin{multicols}{2}
+	[
+		\subsubsection{Estructura}
+		Los elementos del codigo Arduino (C++).
+	]
+	\paragraph{Sketch}
+	\begin{itemize}
+		\item loop()
+		\item setup()
+	\end{itemize}
+
+	\paragraph{Control Structure}
+	\begin{itemize}
+		\item break
+		\item continue
+		\item do...while
+		\item else
+		\item for
+		\item goto
+		\item if
+		\item return
+		\item switch...case
+		\item while
+	\end{itemize}
+
+	\paragraph{Further Syntax}
+	\begin{itemize}
+		\item \#define (define)
+		\item \#include (include)
+		\item /* */ (block comment)
+		\item // (single line comment)
+		\item ; (semicolon)
+		\item {} (curly braces)
+	\end{itemize}
+
+	\paragraph{Arithmetic Operators}
+	\begin{itemize}
+		\item \% (remainder)
+		\item * (multiplication)
+		\item + (addition)
+		\item - (subtraction)
+		\item / (division)
+		\item = (assignment operator)
+	\end{itemize}
+
+	\paragraph{Comparison Operators}
+	\begin{itemize}
+		\item != (not equal to)
+		\item < (less than)
+		\item <= (less than or equal to)
+		\item == (equal to)
+		\item > (greater than)
+		\item >= (greater than or equal to)
+	\end{itemize}
+
+	\paragraph{Boolean Operators}
+	\begin{itemize}
+		\item ! (logical not)
+		\item \&\& (logical and)
+		\item || (logical or)
+	\end{itemize}
+
+	\paragraph{Pointer Access Operators}
+	\begin{itemize}
+		\item \& (reference operator)
+		\item * (dereference operator)
+	\end{itemize}
+
+	\paragraph{Bitwise Operators}
+	\begin{itemize}
+		\item \& (bitwise and)
+		\item <~<~ (bitshift left)
+		\item >~>~ (bitshift right)
+		\item \^ ~ (bitwise xor)
+		\item | (bitwise or)
+		\item \~~ (bitwise not)
+	\end{itemize}
+
+	\paragraph{Compound Operators}
+	\begin{itemize}
+		\item \%= (compound remainder)
+		\item \&= (compound bitwise and)
+		\item *= (compound multiplication)
+		\item ++ (increment)
+		\item += (compound addition)
+		\item -~- (decrement)
+		\item -~= (compound subtraction)
+		\item /= (compound division)
+		\item \^~= (compound bitwise xor)
+		\item |= (compound bitwise or)
+	\end{itemize}
+
+\end{multicols}
 \end{document}
