@@ -1,8 +1,15 @@
 \documentclass[../informe_krapp.tex]{subfiles}
 \begin{document}
 \graphicspath{{../images/}}
+{
+\renewcommand{\subsectionbreak}{}
 \section{Introducción}
-Librepass es un sistema FOSS(Free and Open Source) de seguridad para empresas
+
+Librepass es un sistema FOSS(Free and Open Source) de seguridad para empresas.
+Al ser FOSS, está hosteado en
+\href{https://github.com/KrappRamiro/librepass}{un repositorio público en GitHub} ---
+{\small \url{https://github.com/KrappRamiro/librepass}}.
+
 Fue desarrollado usando una placa de desarrollo DOIT ESP32 DevKit V1, conectado
 a un array de lectores RFID-RC552.
 
@@ -68,5 +75,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+}
 
 \end{document}

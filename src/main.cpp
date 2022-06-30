@@ -1,20 +1,5 @@
-#include <Arduino.h>
-#include <ArduinoLog.h>
-#include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
-#include <SPI.h> //library responsible for communicating of SPI bus
-#include <iostream>
-#include <time.h>
-#include <vector>
-
-#ifdef ESP32
-#include <AsyncTCP.h>
-#include <WiFi.h>
-#elif defined(ESP8266)
-#include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h>
-#endif
-#include <ESPAsyncWebServer.h>
-
+#include "empleado.h"
+#include "krapp_utils.h"
 #define SS_PIN 5
 #define RST_PIN 21
 #define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
@@ -28,91 +13,9 @@ te recomiendo personalmente este post,  es corto, sencillo, y bien explicado
 para principiantes:
 https://www.thecrazyprogrammer.com/2021/01/better-alternatives-for-using-namespace-std-in-c.html
 */
-class Empleado {
-	/*
-		Si alguien se pregunta por qué, en las clases, las variables estan en private,
-		la respuesta es muy sencilla:
-		Es porque no se desea que se modifiquen las variables de forma manual.
-		Esto es porque esa práctica es propensa a errores, ya que se podría introducir
-		un valor inadecuado y generar algun problema.
-
-		Por eso se usan funciones public, normalmente llamadas setters, que permiten
-		asignar y leer los valores, y que establecen un margen de valores seguros.
-	*/
-private:
-	String name;
-	bool isAlive = true;
-	String dni;
-	int clearanceLevel;
-	String cargoAdministrativo;
-
-public:
-	static int cuentaEmpleados;
-	// Constructor lleno
-	Empleado(String name, String dni, int clearanceLevel, String cargoAdministrativo)
-	{
-		Log.infoln("Creando empleado con los siguientes valores: ");
-		cuentaEmpleados++;
-		setName(name);
-		setDni(dni);
-		setClearanceLevel(clearanceLevel);
-		setCargoAdministrativo(cargoAdministrativo);
-	}
-	// Constructor vacio
-	Empleado() { cuentaEmpleados++; }
-
-	// Destructor
-	~Empleado()
-	{
-		cuentaEmpleados--;
-	}
-	void setLifeStatus(bool lifeStatus)
-	{
-		this->isAlive = lifeStatus;
-	}
-	bool getLifeStatus()
-	{
-		return isAlive;
-	}
-	void setName(String name)
-	{
-		Log.infoln(("\tSetting name to: %s "), name);
-		this->name = name;
-	}
-	String getName()
-	{
-		return name;
-	}
-	void setDni(String dni)
-	{
-		Log.infoln(("\tSetting dni to: %s "), dni);
-		this->dni = dni;
-	}
-	String getDni()
-	{
-		return dni;
-	}
-	void setClearanceLevel(int clearanceLevel)
-	{
-		Log.infoln(("\tSetting clearanceLevel to: %d "), clearanceLevel);
-		Serial.println();
-		this->clearanceLevel = clearanceLevel;
-	}
-	int getClearanceLevel()
-	{
-		return clearanceLevel;
-	}
-	void setCargoAdministrativo(String cargoAdministrativo)
-	{
-		Log.infoln(("\tSetting cargoAdministrativo to: %s "), cargoAdministrativo);
-		Serial.println();
-		this->cargoAdministrativo = cargoAdministrativo;
-	}
-	String getCargoAdministrativo()
-	{
-		return cargoAdministrativo;
-	}
-};
+const char* PARAM_INPUT_1 = "input1";
+const char* PARAM_INPUT_2 = "input2";
+const char* PARAM_INPUT_3 = "input3";
 int Empleado::cuentaEmpleados = 0;
 
 // std::vector<Empleado> Empleados;
@@ -121,165 +24,57 @@ int Empleado::cuentaEmpleados = 0;
 // Empleado misEmpleados[20];
 Empleado miEmpleado;
 
-const char* ssid = "TeleCentro-882b"; // Nombre de la red
-const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
+//------------------ INICIO DE Configuracion de conexion a internet ----------------
+const char* ssid = "Krapp"; // Nombre de la red
+const char* password = "yougotit"; // Contraseña de la red
+
+// const char* ssid = "TeleCentro-882b";
+// const char* password = "ZGNJVMMHZ2MY";
+
 AsyncWebServer server(80); // Inicio el web server en el puerto 80
+// Create an Event Source on /events
+AsyncEventSource events("/events");
+// ----------------- FIN DE Configuracion de conexion a internet ------------------
 
-// --------------- Cosas para conmseguir la Hora -------------------------
-
+// ----------------- INICIO DE Configuracion de servidor NTP -------------------
+// Un servidor NTP es un servidor que se encarga de obtener la fecha y hora actual
 const char* ntpServer = "pool.ntp.org"; // NTP server pool
-const long gmtOffset_sec = 0;
-const int daylightOffset_sec = 3600;
+const long gmtOffset_sec = 0; // GMT offset in seconds
+const int daylightOffset_sec = 3600; // daylight saving offset in seconds
+// -------------- FIN DE Configuracion de servidor NTP -------------------
 
-// ------------------------------------------------------------------------
-
-// --------------- Variables del MFRC552 -------------------#
+//  ---------------- INICIO DE Variables del MFRC552 ---------------------
 // key es una variable que se va a usar a lo largo de todo el codigo
 MFRC522::MIFARE_Key key;
 // Status es el codigo de estado de autenticacion
 MFRC522::StatusCode status;
 // Defino los pines que van al modulo RC552
 MFRC522 mfrc522(SS_PIN, RST_PIN);
-// --------------- FIN DE Variables del MFRC552 -------------------#
-
-String getDateTime()
-{
-	time_t now = time(nullptr);
-	struct tm* timeinfo = localtime(&now);
-	char buffer[80];
-	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
-	return buffer;
-}
-
-String getUserStringSerialInput()
-{
-	Serial.setTimeout(30000L); // 30 segundos de timeout
-	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
-	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
-	Log.infoln("Received the input: %s", userInput); // Imprimo el input
-	return userInput; // Devuelvo el input
-}
+// ----------------- FIN DE Variables del MFRC552 ---------------------
 
 void createEmployee()
 {
+	/*
+	Esta funcion crea un empleado en la lista de empleados
+	Args:
+		None
+	Returns:
+		None
+	*/
 	//	Empleado* temp = new Empleado(
-	//		getUserStringSerialInput(),
-	//		getUserStringSerialInput(),
+	//		getSerialStringInput(),
+	//		getSerialStringInput(),
 	//		4,
-	//		getUserStringSerialInput());
+	//		getSerialStringInput());
 	// misEmpleados[0] = Empleado(
 	miEmpleado = Empleado( // Creo un empleado
-		getUserStringSerialInput(), // Nombre
-		getUserStringSerialInput(), // DNI
+		getSerialStringInput(), // Nombre
+		getSerialStringInput(), // DNI
 		4, // Nivel de autorizacion
-		getUserStringSerialInput()); // Cargo administrativo
+		getSerialStringInput()); // Cargo administrativo
 }
-
-String getUID() //
-// conseguido de https://randomnerdtutorials.com/security-access-using-mfrc522-rfid-reader-with-arduino/
-{
-	String content = "";
-	for (byte i = 0; i < mfrc522.uid.size; i++) {
-		content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-		content.concat(String(mfrc522.uid.uidByte[i], HEX));
-	}
-	content.toUpperCase();
-	String theUID = content.substring(1);
-	return theUID;
-}
-
-void readingData()
-{
-	/*
-	Esta funcion lee la data del tag RFID
-	*/
-	// Imprime la información técnica del tag
-	mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
-
-	// Prepara la key, todas las keys estan seteadas a ser FFFFFFFFFFFFh
-	for (byte i = 0; i < 6; i++)
-		key.keyByte[i] = 0xFF;
-
-	// Preparo un buffer para la lectura de informacion.
-	// El tamaño del buffer depende de SIZE_BUFFER, es un #define que esta en la parte de arriba
-	byte buffer[SIZE_BUFFER] = { 0 };
-
-	// Defino en que bloque del tag voy a estar trabajando
-	byte block = 1;
-	byte size = SIZE_BUFFER; // size va a ser usado para leer luego el bloque
-
-	// Intenta conectarse con el PICC (Proximity Integrated Circuit Card).
-	// En caso de lograrlo, devuelve STATUS_OK, segun la inea 750 de MFRC552.cpp
-	status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid));
-
-	// Intenta comunicarse con el PICC
-	// SI no lo logró, tira el codigo de error y sale de la funcion
-	// Si lo logró, sigue de largo
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("Authentication failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	}
-
-	// Intenta leer el bloque n del tag
-	// Si no lo logro, tira codigo de error y sale de la funcion
-	// Si lo logró, va al else
-	status = mfrc522.MIFARE_Read(block, buffer, &size);
-	if (status != MFRC522::STATUS_OK) {
-		Serial.print(F("Reading failed: "));
-		Serial.println(mfrc522.GetStatusCodeName(status));
-		digitalWrite(redPin, HIGH);
-		delay(1000);
-		digitalWrite(redPin, LOW);
-		return;
-	} else {
-		Serial.print(F("Reading OK"));
-		digitalWrite(greenPin, HIGH);
-		delay(1000);
-		digitalWrite(greenPin, LOW);
-	}
-
-	// ----- A esta sección de aca solamente se llega despues de que todo salió bien ------//
-	Serial.print(F("\nData from block ["));
-	// Printea el bloque leido
-	Serial.print(block);
-	Serial.print(F("]: "));
-
-	// Printea lo que leyó
-	for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
-		Serial.write(buffer[i]);
-	}
-	Serial.println(F(" "));
-}
-
-int menu()
-{
-	//  TODO: Reemplazar una parte de los contenidos de esta funcion
-	//   con un llamado a getUserSerialInput
-	Serial.println(F("\nElige una opcion"));
-	Serial.println(F("0 - Leer data"));
-	Serial.println(F("1 - Escribir data\n"));
-	Serial.println(F("2 - leer nombre empleado\n"));
-
-	// waits while the user does not start data
-	while (!Serial.available()) { };
-
-	// retrieves the chosen option
-	int op = (int)Serial.read();
-
-	// remove all characters after option (as \n per example)
-	while (Serial.available()) {
-		if (Serial.read() == '\n')
-			break;
-		Serial.read();
-	}
-	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
-}
-
-const char index_html[] PROGMEM = R"rawliteral(
+#pragma region // esto es exclusivo de vscode, no afecta al compilador, me permite contraer y expandir
+const char index_html[] = R"rawliteral(
 <!DOCTYPE html>
 <html>
 	<head>
@@ -295,7 +90,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 				font-family: Arial;
 				display: inline-block;
 				margin: 0px auto;
-				text-align: center;
+				text-align: left;
 			}
 			h2 {
 				font-size: 3rem;
@@ -311,6 +106,10 @@ const char index_html[] PROGMEM = R"rawliteral(
 				vertical-align: middle;
 				padding-bottom: 15px;
 			}
+			.user-input {
+				display: block;
+				margin: 10px;
+			}
 		</style>
 	</head>
 	<body>
@@ -318,75 +117,159 @@ const char index_html[] PROGMEM = R"rawliteral(
 		<p>
 			<i class="fas fa-thermometer-half" style="color: #059e8a"></i>
 			<span class="dht-labels">Temperature is: </span>
-			<span id="temperature">%TEMPERATURE%</span>
+			<span id="temperature-el">%TEMPERATURE%</span>
 			<sup class="units">&deg;C</sup>
 		</p>
 		<p>
 			<i class="fas fa-tint" style="color: #00add6"></i>
 			<span class="dht-labels">Humidity is: </span>
-			<span id="humidity">%HUMIDITY%</span>
+			<span id="humidity-el">%HUMIDITY%</span>
 			<sup class="units">&percnt;</sup>
 		</p>
 		<p>
 			<i class="fa-solid fa-clock"></i>
 			<span class="dht-labels">Date and hour is: </span>
-			<span id="date-hour">%DATE-HOUR%</span>
+			<span id="date-hour-el">%DATE-HOUR%</span>
 		</p>
+		<p>
+			<span class="dht-labels">Se leyo? :</span>
+			<span id="rfid-uid-el">%rfid-uid%</span>
+		</p>
+		<!-- User input -->
+		<!--
+		<label for="name-input-el">Nombre:</label>
+		<input
+			type="text"
+			name="name-input-el"
+			class="user-input"
+			id="name-input-el"
+		/>
+		<label for="dni-input-el"></label>
+		<input
+			type="text"
+			name="dni-input-el"
+			class="user-input"
+			id="dni-input-el"
+		/>
+		<label for="clearance-level-input-el"></label>
+		<input
+			type="text"
+			name="clearance-level-input-el"
+			class="user-input"
+			id="clearance-level-input-el"
+		/>
+		<label for="cargo-administrativo-input-el"></label>
+		<input
+			type="text"
+			name="cargo-administrativo-input-el"
+			class="user-input"
+			id="cargo-administrativo-input-el"
+		/>
+		<button id="save-input-btn">SAVE INPUT</button>
+		-->
+
+		<form action="/get">
+			input1: <input type="text" name="input1" />
+			<input type="submit" value="Submit" />
+		</form>
+		<br />
+		<form action="/get">
+			input2: <input type="text" name="input2" />
+			<input type="submit" value="Submit" />
+		</form>
+		<br />
+		<form action="/get">
+			input3: <input type="text" name="input3" />
+			<input type="submit" value="Submit" />
+		</form>
 	</body>
+
 	<script>
+		const saveInputBtn = document.getElementById("save-input-btn");
+
+		// -------------- INICIO DE Eventos -----------------
+		if (!!window.EventSource) {
+			//A partir de aca van todos los eventos del ESP32:
+			var source = new EventSource("/events");
+			source.addEventListener("open", function (e) {
+				console.log("Events Connected");
+			});
+			//Evento que se ejecuta cada vez que se recibe un error
+			source.addEventListener("error", function (e) {
+				if (e.target.readyState != EventSource.OPEN) {
+					console.log("Events Disconnected");
+				}
+			});
+			// Evento que se ejecuta cada vez que se recibe un mensaje cualquiera
+			source.addEventListener("message", function (e) {
+				console.log("message", e.data);
+			});
+			// Evento que se ejecuta cada vez que se recibe una lectura del rfid
+			source.addEventListener("rfidReadEvent", function (e) {
+				console.log("rfidReadEvent", e.data);
+				document.getElementById("rfid-uid-el").innerHTML = e.data;
+			});
+		}
+		// Creo que aca van los eventos de la propia pagina web
+		saveInputBtn.addEventListener("click", function () {
+			const person = {
+				name: document.getElementById("name-input-el").value,
+				dni: document.getElementById("dni-input-el").value,
+				clearanceLevel: document.getElementById("clearance-level-input-el")
+					.value,
+				cargoAdministrativo: document.getElementById(
+					"cargo-administrativo-input-el"
+				).value,
+			};
+			console.log("Read the following things:"); //log the saved lead
+			console.dir(person);
+		});
+
+		// ------------ FIN DE Eventos ------------
+
+		// ------------------ INICIO DE Intervalos ------------------
+		// Intervalo de temperatura
 		setInterval(function () {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function () {
 				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById("temperature").innerHTML = this.responseText;
+					document.getElementById("temperature-el").innerHTML =
+						this.responseText;
 				}
 			};
 			xhttp.open("GET", "/temperature", true); //esto llama al server.on() correspondiente
 			console.log("Updating temperature");
 			xhttp.send();
 		}, 3000);
+		// Intervalo de humedad
 		setInterval(function () {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function () {
 				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById("humidity").innerHTML = this.responseText;
+					document.getElementById("humidity-el").innerHTML = this.responseText;
 				}
 			};
 			xhttp.open("GET", "/humidity", true); //esto llama al server.on() correspondiente
 			console.log("updating humidity");
 			xhttp.send();
 		}, 3000);
+		// Intervalo de fecha y hora
 		setInterval(function () {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function () {
 				if (this.readyState == 4 && this.status == 200) {
-					document.getElementById("date-hour").innerHTML = this.responseText;
+					document.getElementById("date-hour-el").innerHTML = this.responseText;
 				}
 			};
 			xhttp.open("GET", "/date-hour", true); //esto llama al server.on() correspondiente
 			console.log("updating date-hour");
 			xhttp.send();
 		}, 3000);
+		// ------------------ FIN DE Intervalos ------------------
 	</script>
 </html>
 )rawliteral";
-
-String processor(const String& var)
-{
-	// Estos consiguiendo x... estan para testear nomas, en realidad no consiguen nada,
-	// estan para que no se me buggee el cerebro mientras entiendo AJAX
-	Serial.println(var);
-	if (var == "TEMPERATURE") {
-		return String("Consiguiendo temperatura...");
-	} else if (var == "HUMIDITY") {
-		return String("Consiguiendo humedad...");
-	} else if (var == "HOUR") {
-		return String("Consiguiendo hora...");
-	} else {
-		return String("");
-	}
-}
-
+#pragma endregion
 void setup()
 {
 	Serial.begin(9600);
@@ -399,31 +282,74 @@ void setup()
 	delay(1000);
 	digitalWrite(LED_BUILTIN, LOW);
 
-	// Connect to Wi-Fi
+	// Me conecto a internet mediante Wi-Fi
 	WiFi.begin(ssid, password);
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(1000);
 		Serial.println("Connecting to WiFi..");
 	}
-
-	// Print ESP32 Local IP Address
+	// Imprimo la IP local del ESP32 (192.168.x.x)
 	Serial.println(WiFi.localIP());
 
-	// Route for root / web page
+	// --------------- INICIO DE Rutas del servidor -----------------
+	// ----- GET's
+	// Ruta para el index.html
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/html", index_html, processor);
 	});
+	// Ruta para la temperatura
 	server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
+	// Ruta para la humedad
 	server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(random(0, 50)).c_str());
 	});
+	// Ruta para la fecha y hora
 	server.on("/date-hour", HTTP_GET, [](AsyncWebServerRequest* request) {
 		request->send_P(200, "text/plain", String(getDateTime()).c_str());
 	});
-	server.begin();
 
+	// Send a GET request to <ESP_IP>/get?input=X<inputMessage>
+	server.on("/get", HTTP_GET, [](AsyncWebServerRequest* request) {
+		String inputMessage;
+		String inputParam;
+		// GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+		if (request->hasParam(PARAM_INPUT_1)) {
+			inputMessage = request->getParam(PARAM_INPUT_1)->value();
+			inputParam = PARAM_INPUT_1;
+		}
+		// GET input2 value on <ESP_IP>/get?input2=<inputMessage>
+		else if (request->hasParam(PARAM_INPUT_2)) {
+			inputMessage = request->getParam(PARAM_INPUT_2)->value();
+			inputParam = PARAM_INPUT_2;
+		}
+		// GET input3 value on <ESP_IP>/get?input3=<inputMessage>
+		else if (request->hasParam(PARAM_INPUT_3)) {
+			inputMessage = request->getParam(PARAM_INPUT_3)->value();
+			inputParam = PARAM_INPUT_3;
+		} else {
+			inputMessage = "No message sent";
+			inputParam = "none";
+		}
+		Serial.println(inputMessage);
+		request->send(204);
+	});
+
+	// ----- Eventos
+	events.onConnect([](AsyncEventSourceClient* client) {
+		if (client->lastId()) {
+			Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
+		}
+		// send event with message "hello!", id current millis
+		// and set reconnect delay to 1 second
+		client->send("hello!", NULL, millis(), 10000);
+	});
+
+	server.addHandler(&events);
+	// ---------------- FIN DE Rutas del servidor -------------------
+
+	server.begin();
 	// Cosas del ntp server para la fecha/hora
 	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	// Inicio el MFRC552
@@ -434,6 +360,7 @@ void setup()
 
 void loop()
 {
+	// ------- INICIO DEL LECTOR RFID --------------
 	// Se espera a que se acerque un tag
 	if (!mfrc522.PICC_IsNewCardPresent()) {
 		return;
@@ -442,10 +369,12 @@ void loop()
 	if (!mfrc522.PICC_ReadCardSerial()) {
 		return;
 	}
-	// Descomentar solamente si se quiere Dumpear toda la info acerca de la tarjeta leida
-	// Ojo que llama automaticamente a PICC_HaltA()
+	// Descomentar solamente si se quiere Dumpear toda la info acerca de la tarjeta leida, ojo que llama automaticamente a PICC_HaltA()
 	// mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 
+	// Le digo al servidor que se leyo el tag RFID
+	events.send(getUID(mfrc522).c_str(), "rfidReadEvent");
+	/*
 	// LLama a la funcion de menu para que el usuario elija una opcion
 	int op = menu();
 	if (op == 0)
@@ -464,6 +393,7 @@ void loop()
 		Serial.println(F("Incorrect Option!"));
 		return;
 	}
+	*/
 
 	// Le dice al PICC que se vaya a un estado de STOP cuando esta activo (o sea, lo haltea)
 	mfrc522.PICC_HaltA();
@@ -472,4 +402,5 @@ void loop()
 	// Tiene que ser llamado si o si despues de la comunicacion con una
 	// autenticación exitosa, en otro caso no se va a poder iniciar otra comunicación.
 	mfrc522.PCD_StopCrypto1();
+	// ------- FIN DEL LECTOR RFID --------------
 }
