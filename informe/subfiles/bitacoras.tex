@@ -375,20 +375,29 @@
 \end{itemize}
 
 \subsubsection{30/06/2022}
-Este último més estuve estudiando Flask y Bootstrap, con el objetivo de conseguir más experiencia como backend,
-ya que pensé que para hacer backend con Arduino iba a necesitar más experiencia. Con flask me hice 2 cursos de FreeCodeCamp,
-y conseguí una buena base de backend.
+\begin{itemize}
+	\item Este último més estuve estudiando Flask y Bootstrap, con el objetivo de conseguir más experiencia como backend,
+	      ya que pensé que para hacer backend con Arduino iba a necesitar más experiencia. Con flask me hice 2 cursos de FreeCodeCamp,
+	      y conseguí una buena base de backend.
 
-Despues me di cuenta de que en realidad, lo que estaba pasando, es que estaba enfocando mal el proyecto.
-Segun me comentaron varios amigos que trabajan de arquitectura de sistemas, y de backend developer, no 
-puedo guardar toda la info de los usuarios en el ESP32, es una locura, porque se llega a perder el ESP o
-se llega a estropear, y chau toda la info.
+	      Despues me di cuenta de que en realidad, lo que estaba pasando, es que estaba enfocando mal el proyecto.
+	      Segun me comentaron varios amigos que trabajan de arquitectura de sistemas, y de backend developer, no
+	      puedo guardar toda la info de los usuarios en el ESP32, es una locura, porque se llega a perder el ESP o
+	      se llega a estropear, y chau toda la info.
 
-Entonces decidí cambiar de paradigma. En vez de hacer todo monolítico en el ESP32, decidí hacer las cosas
-bien, como lo hacen los desarrolladores de IOT, y me voy a pasar a Cloud.
+	      Entonces decidí cambiar de paradigma. En vez de hacer todo monolítico en el ESP32, decidí hacer las cosas
+	      bien, como lo hacen los desarrolladores de IOT, y me voy a pasar a Cloud.
 
-Para ya tener una buena base, anduve estudiando y haciendo apuntes del Internet Model,
-de los protocolos TCP/IP, de HTTP y del modelo REST y las API's RESTful.
+	      Para ya tener una buena base, anduve estudiando y haciendo apuntes del Internet Model,
+	      de los protocolos TCP/IP, de HTTP y del modelo REST y las API's RESTful.
+
+	\item Se me acaba de ocurrir una idea buenisima. Puedo hacer una pagina web con flask, que se conecte
+	      a AWS y desde ahí actualice la lista de usuarios permitidos. Y aparte, puedo hacer que el ESP32 mande una request
+	      a una API REST para ver si el usuario esta autorizado. Entonces, me ahorro el uso de MQTT, es buenisimo.
+				
+				En resumen, el ESP32 como un cliente que consulte a una API REST si el usuario esta autorizado, y que la API REST lea
+				de una base de datos que este en AWS. Y que esa base de datos pueda actualizarse usando un front hecho con flask
+\end{itemize}
 
 Con esto en base, decidí hacer el cambiazo con AWS, y me voy a pasar a AWS IOT Core
 
