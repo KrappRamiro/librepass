@@ -1,0 +1,10 @@
+/.pio/
+/.vscode/
+/include/
+/informe/
+/informe_epdl/
+/lib/
+/src/
+/test/
+/diagrama.drawio
+/platformio.ini
