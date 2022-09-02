@@ -21,11 +21,11 @@ else:
     print("using the local postgresql db")
     app.config['SQLALCHEMY_DATABASE_URI'] = \
         'postgresql://{username}:{password}@{host}:{port}/{database}'.format(
-        username='flask-movies',
+        username='librepass',
         password='complexpassword123',
         host='localhost',
         port='5432',
-        database='flask-movies',
+        database='librepass',
     )
 
 db = SQLAlchemy(app)
