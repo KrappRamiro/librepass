@@ -1,8 +1,8 @@
-from src import app
-from src import db
+from webapp import app
+from webapp import db
 from flask import render_template, request, jsonify, redirect, url_for
-#from src.db_models import Movie, Group
-#from src.forms import MovieForm, MovieDetails
+#from webapp.db_models import Movie, Group
+#from webapp.forms import MovieForm, MovieDetails
 
 
 @app.route('/')

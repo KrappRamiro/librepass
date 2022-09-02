@@ -1,5 +1,5 @@
 # This file is used for database models
-from src import db
+from webapp import db
 from datetime import datetime
 
 

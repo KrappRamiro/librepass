@@ -1,7 +1,7 @@
 from datetime import date
 
-from src import db
-from src.db_models import Empleado, Registro
+from webapp import db
+from webapp.db_models import Empleado, Registro
 
 try:
     db.create_all()
