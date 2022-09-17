@@ -1,0 +1,31 @@
+{%extends "base.html"%} {%block content%}
+<h1>Sign in</h1>
+<form action="" method="post" novalidate>
+	<!--
+		The action attribute of the form is used to tell the browser the URL that should be used when submitting the information the user entered in the form.
+		When the action is set to an empty string the form is submitted to the URL that is currently in the address bar
+
+		En resumen, cuando action tiene un valor, hace lo que esta en action
+		Si no tiene un valor, x default manda ese form a la URL donde estas
+	-->
+	{{form.hidden_tag()}}
+	<p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+	<p>
+		{{ form.username.label }} <br />
+		{{ form.username(size=32) }} <br />
+		{% for error in form.username.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{%endfor%}
+	</p>
+	<p>
+		{{ form.password.label }} <br />
+		{{ form.password(size=32) }} <br />
+		{% for error in form.password.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{%endfor%}
+	</p>
+
+	<p>{{ form.remember_me() }} {{ form.remember_me.label() }}</p>
+	<p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

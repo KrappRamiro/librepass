@@ -1,0 +1,260 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{/*}
+\PYG{c+cm}{ */}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}Arduino.h\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}iostream\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}vector\PYGZgt{}}
+
+\PYG{c+cm}{/* Se usa std::vector en reemplazo de usar `using namespace std` por una muy}
+\PYG{c+cm}{buena razon, y es que se evita el namespace pollution. Si no sabes qué es eso,}
+\PYG{c+cm}{te recomiendo personalmente este post,  es corto, sencillo, y bien explicado}
+\PYG{c+cm}{para principiantes:}
+\PYG{c+cm}{https://www.thecrazyprogrammer.com/2021/01/better\PYGZhy{}alternatives\PYGZhy{}for\PYGZhy{}using\PYGZhy{}namespace\PYGZhy{}std\PYGZhy{}in\PYGZhy{}c.html}
+\PYG{c+cm}{*/}
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{p}{;}
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{	Si alguien se pregunta por qué, en las clases, las variables estan en private,}
+\PYG{c+cm}{	la respuesta es muy sencilla:}
+\PYG{c+cm}{	Es porque no se desea que se modifiquen las variables de forma manual.}
+\PYG{c+cm}{	Esto es porque esa práctica es propensa a errores, ya que se podría introducir}
+\PYG{c+cm}{	un valor inadecuado y generar algun problema.}
+
+\PYG{c+cm}{	Por eso se usan funciones public, normalmente llamadas setters, que permiten}
+\PYG{c+cm}{	asignar y leer los valores, y que establecen un margen de valores seguros.}
+\PYG{c+cm}{*/}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{Empleado}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{	}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{isAlive}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{dni}\PYG{p}{;}
+\PYG{+w}{	}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{clearanceLevel}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{cargoAdministrativo}\PYG{p}{;}
+
+\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{	}\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{setLifeStatus}\PYG{p}{(}\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{lifeStatus}\PYG{p}{)}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{isAlive}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lifeStatus}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{setName}\PYG{p}{(}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{)}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{name}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{setName}\PYG{p}{(}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{dni}\PYG{p}{)}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{dni}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{dni}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{setName}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{clearanceLevel}\PYG{p}{)}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{clearanceLevel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{clearanceLevel}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{setName}\PYG{p}{(}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{cargoAdministrativo}\PYG{p}{)}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{this}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{cargoAdministrativo}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{cargoAdministrativo}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{};}
+
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}MFRC522.h\PYGZgt{}}\PYG{c+c1}{ //library responsible for communicating with the module RFID\PYGZhy{}RC522}
+\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}SPI.h\PYGZgt{}}\PYG{c+c1}{ //library responsible for communicating of SPI bus}
+\PYG{c+cp}{\PYGZsh{}define SS\PYGZus{}PIN 21}
+\PYG{c+cp}{\PYGZsh{}define RST\PYGZus{}PIN 22}
+\PYG{c+cp}{\PYGZsh{}define SIZE\PYGZus{}BUFFER 18}
+\PYG{c+cp}{\PYGZsh{}define MAX\PYGZus{}SIZE\PYGZus{}BLOCK 16}
+\PYG{c+cp}{\PYGZsh{}define greenPin 12}
+\PYG{c+cp}{\PYGZsh{}define redPin 32}
+\PYG{c+c1}{// used in authentication}
+\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{MIFARE\PYGZus{}Key}\PYG{+w}{ }\PYG{n}{key}\PYG{p}{;}
+\PYG{c+c1}{// authentication return status code}
+\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{StatusCode}\PYG{+w}{ }\PYG{n}{status}\PYG{p}{;}
+\PYG{c+c1}{// Defined pins to module RC522}
+\PYG{n}{MFRC522}\PYG{+w}{ }\PYG{n+nf}{mfrc522}\PYG{p}{(}\PYG{n}{SS\PYGZus{}PIN}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{RST\PYGZus{}PIN}\PYG{p}{);}
+
+\PYG{c+c1}{// reads data from card/tag}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{readingData}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{	}\PYG{c+c1}{// prints the technical details of the card/tag}
+\PYG{+w}{	}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PICC\PYGZus{}DumpDetailsToSerial}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{uid}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{c+c1}{// prepare the key \PYGZhy{} all keys are set to FFFFFFFFFFFFh}
+\PYG{+w}{	}\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{6}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{key}\PYG{p}{.}\PYG{n}{keyByte}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mh}{0xFF}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c+c1}{// buffer for read data}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{buffer}\PYG{p}{[}\PYG{n}{SIZE\PYGZus{}BUFFER}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{	}\PYG{c+c1}{// the block to operate}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{block}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{SIZE\PYGZus{}BUFFER}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// authenticates the block to operate}
+\PYG{+w}{	}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PCD\PYGZus{}Authenticate}\PYG{p}{(}\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{PICC\PYGZus{}CMD\PYGZus{}MF\PYGZus{}AUTH\PYGZus{}KEY\PYGZus{}A}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{block}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{key}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{uid}\PYG{p}{));}\PYG{+w}{ }\PYG{c+c1}{// line 834 of MFRC522.cpp file}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{STATUS\PYGZus{}OK}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Authentication failed: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{GetStatusCodeName}\PYG{p}{(}\PYG{n}{status}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{	}\PYG{c+c1}{// read data from block}
+\PYG{+w}{	}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{MIFARE\PYGZus{}Read}\PYG{p}{(}\PYG{n}{block}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buffer}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{size}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{STATUS\PYGZus{}OK}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Reading failed: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{GetStatusCodeName}\PYG{p}{(}\PYG{n}{status}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{Data from block [\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{block}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}]: \PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{c+c1}{// prints read data}
+\PYG{+w}{	}\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{uint8\PYGZus{}t}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}SIZE\PYGZus{}BLOCK}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{write}\PYG{p}{(}\PYG{n}{buffer}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]);}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{writingData}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{	}\PYG{c+c1}{// prints thecnical details from of the card/tag}
+\PYG{+w}{	}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PICC\PYGZus{}DumpDetailsToSerial}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{uid}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{c+c1}{// waits 30 seconds dor data entry via Serial}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{setTimeout}\PYG{p}{(}\PYG{l+m+mf}{30000L}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Enter the data to be written with the \PYGZsq{}\PYGZsh{}\PYGZsq{} character at the end }\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{[maximum of 16 characters]:\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{c+c1}{// prepare the key \PYGZhy{} all keys are set to FFFFFFFFFFFFh}
+\PYG{+w}{	}\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m+mi}{6}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{key}\PYG{p}{.}\PYG{n}{keyByte}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mh}{0xFF}\PYG{p}{;}
+
+\PYG{+w}{	}\PYG{c+c1}{// buffer para armazenamento dos dados que iremos gravar}
+\PYG{+w}{	}\PYG{c+c1}{// buffer for storing data to write}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{buffer}\PYG{p}{[}\PYG{n}{MAX\PYGZus{}SIZE\PYGZus{}BLOCK}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{;}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{block}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// the block to operate}
+\PYG{+w}{	}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{dataSize}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// size of data (bytes)}
+
+\PYG{+w}{	}\PYG{c+c1}{// recover on buffer the data from Serial}
+\PYG{+w}{	}\PYG{c+c1}{// all characters before chacactere \PYGZsq{}\PYGZsh{}\PYGZsq{}}
+\PYG{+w}{	}\PYG{n}{dataSize}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{readBytesUntil}\PYG{p}{(}\PYG{l+s+sc}{\PYGZsq{}\PYGZsh{}\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{char}\PYG{o}{*}\PYG{p}{)}\PYG{n}{buffer}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}SIZE\PYGZus{}BLOCK}\PYG{p}{);}
+\PYG{+w}{	}\PYG{c+c1}{// void positions that are left in the buffer will be filled with whitespace}
+\PYG{+w}{	}\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{byte}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{dataSize}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}SIZE\PYGZus{}BLOCK}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{o}{++}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{buffer}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+sc}{\PYGZsq{} \PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{	}\PYG{n}{block}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// the block to operate}
+\PYG{+w}{	}\PYG{n}{String}\PYG{+w}{ }\PYG{n}{str}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{char}\PYG{o}{*}\PYG{p}{)}\PYG{n}{buffer}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// transforms the buffer data in String}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{str}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c+c1}{// authenticates the block to operate}
+\PYG{+w}{	}\PYG{c+c1}{// Authenticate is a command to hability a secure communication}
+\PYG{+w}{	}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PCD\PYGZus{}Authenticate}\PYG{p}{(}\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{PICC\PYGZus{}CMD\PYGZus{}MF\PYGZus{}AUTH\PYGZus{}KEY\PYGZus{}A}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n}{block}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{key}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{uid}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{STATUS\PYGZus{}OK}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}PCD\PYGZus{}Authenticate() failed: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{GetStatusCodeName}\PYG{p}{(}\PYG{n}{status}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{c+c1}{// else Serial.println(F(\PYGZdq{}PCD\PYGZus{}Authenticate() success: \PYGZdq{}));}
+
+\PYG{+w}{	}\PYG{c+c1}{// Writes in the block}
+\PYG{+w}{	}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{MIFARE\PYGZus{}Write}\PYG{p}{(}\PYG{n}{block}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{buffer}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MAX\PYGZus{}SIZE\PYGZus{}BLOCK}\PYG{p}{);}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{status}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{MFRC522}\PYG{o}{::}\PYG{n}{STATUS\PYGZus{}OK}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{print}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}MIFARE\PYGZus{}Write() failed: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{GetStatusCodeName}\PYG{p}{(}\PYG{n}{status}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}MIFARE\PYGZus{}Write() success: \PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{1000}\PYG{p}{);}
+\PYG{+w}{		}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{// menu to operation choice}
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n+nf}{menu}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{Choose an option:\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}0 \PYGZhy{} Reading data\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}1 \PYGZhy{} Writing data}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{));}
+
+\PYG{+w}{	}\PYG{c+c1}{// waits while the user does not start data}
+\PYG{+w}{	}\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{available}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{	}\PYG{c+c1}{// retrieves the chosen option}
+\PYG{+w}{	}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{p}{)}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{read}\PYG{p}{();}
+
+\PYG{+w}{	}\PYG{c+c1}{// remove all characters after option (as \PYGZbs{}n per example)}
+\PYG{+w}{	}\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{available}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{read}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s+sc}{\PYGZsq{}\PYGZbs{}n\PYGZsq{}}\PYG{p}{)}
+\PYG{+w}{			}\PYG{k}{break}\PYG{p}{;}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{read}\PYG{p}{();}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{k}{return}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{op}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{48}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// subtract 48 from read value, 48 is the zero from ascii table}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{setup}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(}\PYG{l+m+mi}{9600}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{SPI}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{();}\PYG{+w}{ }\PYG{c+c1}{// Init SPI bus}
+\PYG{+w}{	}\PYG{n}{pinMode}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OUTPUT}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{pinMode}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{OUTPUT}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HIGH}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{delay}\PYG{p}{(}\PYG{l+m+mi}{500}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{greenPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{digitalWrite}\PYG{p}{(}\PYG{n}{redPin}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LOW}\PYG{p}{);}
+
+\PYG{+w}{	}\PYG{c+c1}{// Init MFRC522}
+\PYG{+w}{	}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PCD\PYGZus{}Init}\PYG{p}{();}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Approach your reader card...\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{	}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{loop}\PYG{p}{()}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{	}\PYG{c+c1}{// Aguarda a aproximacao do cartao}
+\PYG{+w}{	}\PYG{c+c1}{// waiting the card approach}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PICC\PYGZus{}IsNewCardPresent}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+\PYG{+w}{	}\PYG{c+c1}{// Select a card}
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PICC\PYGZus{}ReadCardSerial}\PYG{p}{())}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{	}\PYG{c+c1}{// Dump debug info about the card; PICC\PYGZus{}HaltA() is automatically called}
+\PYG{+w}{	}\PYG{c+c1}{// mfrc522.PICC\PYGZus{}DumpToSerial(\PYGZam{}(mfrc522.uid));\PYGZlt{}/p\PYGZgt{}\PYGZlt{}p\PYGZgt{} //call menu function and retrieve the desired option}
+\PYG{+w}{	}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{op}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{menu}\PYG{p}{();}
+
+\PYG{+w}{	}\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{op}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{readingData}\PYG{p}{();}
+\PYG{+w}{	}\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{op}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{+w}{		}\PYG{n}{writingData}\PYG{p}{();}
+\PYG{+w}{	}\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n}{Serial}\PYG{p}{.}\PYG{n}{println}\PYG{p}{(}\PYG{n}{F}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Incorrect Option!\PYGZdq{}}\PYG{p}{));}
+\PYG{+w}{		}\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{	}\PYG{c+c1}{// instructs the PICC when in the ACTIVE state to go to a \PYGZdq{}STOP\PYGZdq{} state}
+\PYG{+w}{	}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PICC\PYGZus{}HaltA}\PYG{p}{();}
+\PYG{+w}{	}\PYG{c+c1}{// \PYGZdq{}stop\PYGZdq{} the encryption of the PCD, it must be called after communication with authentication, otherwise new communications can not be initiated}
+\PYG{+w}{	}\PYG{n}{mfrc522}\PYG{p}{.}\PYG{n}{PCD\PYGZus{}StopCrypto1}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

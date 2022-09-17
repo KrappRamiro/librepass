@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5b3cd5b80eb8b217c20fb37074ff4a33'
@@ -29,6 +30,14 @@ else:
     )
 
 db = SQLAlchemy(app)
+login = LoginManager(app)
+'''
+Flask-Login provides a very useful feature that forces users to log in before they can view certain pages of the application.
+If a user who is not logged in tries to view a protected page, Flask-Login will automatically redirect the user to the login form,
+and only redirect back to the page the user wanted to view after the login process is complete
 
+The 'login' value below is the function (or endpoint) name for the login view. In other words, the name you would use in a url_for() call to get the URL.
+'''
+login.login_view = 'login'
 
 from webapp import routes
