@@ -40,6 +40,7 @@ class Empleado(db.Model):
     nombre = db.Column(db.String(128), nullable=False)
     dni = db.Column(db.String(20), nullable=False)
     nivel_acceso = db.Column(db.Integer(), nullable=False)
+    rfid = db.Column(db.String(40), unique=True)
     # backref es una forma simple de darle una nueva propiedad a la clase Acceso. O sea, yo podria acceder al Empleado haciendo Acceso.loQueHayaPuestoEnBackref https://stackoverflow.com/a/44538989/15965186
     '''
     For a one-to-many relationship, a db.relationship field is normally defined on the "one" side, and is used as a convenient way to get access to the "many".
@@ -51,12 +52,19 @@ class Empleado(db.Model):
     def __repr__(self):
         return '<Empleado: {}>'.format(self.nombre)
 
+class Puerta(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    nivel_seguridad = db.Column(db.Integer(), nullable=False)
+    nota = db.Column(db.String(), nullable=True)
+    accesos = db.relationship('Acceso', backref="puerta", lazy="dynamic")
 
 class Acceso(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), nullable=False,
                           index=True, default=datetime.utcnow)
+    autorizado = db.Column(db.Boolean(), nullable=False)
     empleado_id = db.Column(db.Integer, db.ForeignKey("empleado.id"))
+    puerta_id = db.Column(db.Integer, db.ForeignKey("puerta.id"))
 
     def __repr__(self):
-        return '<Acceso: {}>'.format(self.timestamp)
+        return f'<Acceso: id: {self.id},\t timestamp: {self.timestamp},\t empleado: {self.empleado_id},\t puerta: {self.puerta}>'

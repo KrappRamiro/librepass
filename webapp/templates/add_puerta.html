@@ -1,0 +1,25 @@
+{%extends "base.html"%} {%block content%}
+
+<h1>Añadir Puerta</h1>
+<form action="" method="post">
+	{{form.hidden_tag()}}
+	<p>
+		{{ form.nivel_seguridad.label}} <br />
+		{{ form.nivel_seguridad(size=32)}} <br />
+		{%for error in form.nivel_seguridad.errors%}
+		<span style="color: red">[{{error}}]</span>
+		{%endfor%}
+	</p>
+
+	<p>
+		{{form.nota.label}} <br />
+		{{form.nota(size=64)}} <br />
+		{% for error in form.nota.errors%}
+		<span style="color: red">[{{error}}]</span>
+		{%endfor%}
+	</p>
+
+	<p>{{form.submit()}}</p>
+</form>
+
+{%endblock%}

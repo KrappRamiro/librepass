@@ -9,17 +9,50 @@
 		{% else %}
 		<title>Welcome to Librepass</title>
 		{% endif %}
+		<style>
+			.nav {
+				list-style-type: none;
+				text-align: center;
+				padding: 0;
+				margin: 0;
+			}
+
+			.nav li {
+				display: inline-block;
+				padding: 5px;
+			}
+		</style>
 	</head>
 	<body>
-		<div>
-			Librepass:
-			<a href="{{url_for('index')}}">Home</a>
-			{% if current_user.is_anonymous %}
-			<a href="{{ url_for('login') }}">Login</a>
-			{% else %}
-			<a href="{{ url_for('logout') }}">Logout</a>
-			{% endif %}
-		</div>
+		<nav>
+			<ul class="nav">
+				<li>LIBREPASS</li>
+				<li>
+					<a href="{{url_for('index')}}">Home</a>
+				</li>
+				{% if current_user.is_anonymous %}
+				<li>
+					<a href="{{ url_for('login') }}">Login</a>
+				</li>
+				{% else %}
+				<li>
+					<a href="{{ url_for('logout') }}">Logout</a>
+				</li>
+				{% endif %}
+				<li>
+					<a href="{{url_for('add_empleado')}}">Añadir Empleado</a>
+				</li>
+				<li>
+					<a href="{{url_for('add_puerta')}}">Añadir puerta</a>
+				</li>
+				<li>
+					<a href="{{url_for('see_empleados')}}">Lista de empleados</a>
+				</li>
+				<li>
+					<a href="{{url_for('see_puertas')}}">Lista de puertas</a>
+				</li>
+			</ul>
+		</nav>
 		<hr />
 		{% with messages = get_flashed_messages() %} {% if messages %}
 		<ul>

@@ -1,0 +1,35 @@
+{%extends 'base.html'%} {% block content%}
+
+<style>
+	table,
+	th,
+	td {
+		border: 1px solid black;
+	}
+</style>
+<h1>Lista de todas las puertas</h1>
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Nivel de seguridad</th>
+			<th>Nota</th>
+		</tr>
+	</thead>
+	<tbody>
+		{%for puerta in puertas%}
+		<tr>
+			<td>{{puerta.id}}</td>
+			<td>{{puerta.nivel_seguridad}}</td>
+			<td>{{puerta.nota}}</td>
+			<td>
+				<a href="/delete_puerta/{{puerta.id}}">Delete</a>
+				<br />
+				<a href="/editar_puerta/{{puerta.id}}">Update</a>
+			</td>
+		</tr>
+		{%endfor%}
+	</tbody>
+</table>
+
+{%endblock%}

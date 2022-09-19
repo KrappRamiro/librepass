@@ -1,0 +1,14 @@
+{%extends 'base.html'%} {% block content%}
+<h1>
+	Estas seguro de que quieres borrar al empleado {{empleado.nombre}}?
+</h1>
+<h2>
+	Esta accion no puede deshacerse
+</h2>
+
+<form action="" method="post">
+	{{form.hidden_tag()}}
+
+	<p>{{form.submit()}}</p>
+</form>
+{%endblock%}

@@ -1,0 +1,41 @@
+{%extends 'base.html'%} {% block content%}
+
+<body>
+	<style>
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+	</style>
+	<h1>Lista de todos los empleados</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nombre</th>
+				<th>DNI</th>
+				<th>Nivel de Acceso</th>
+				<th>RFID</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%for empleado in empleados%}
+			<tr>
+				<td>{{empleado.id}}</td>
+				<td>{{empleado.nombre}}</td>
+				<td>{{empleado.dni}}</td>
+				<td>{{empleado.nivel_acceso}}</td>
+				<td>{{empleado.rfid}}</td>
+				<td>
+					<a href="/delete_empleado/{{empleado.id}}">Delete</a>
+					<br />
+					<a href="/edit_empleado/{{empleado.id}}">Update</a>
+				</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
+</body>
+
+{%endblock%}

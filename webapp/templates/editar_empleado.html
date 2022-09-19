@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<h1>Editar Empleado</h1>
+<form action="" method="post">
+	{{ form.hidden_tag() }}
+	<p>
+		{{ form.nombre.label }}<br />
+		{{ form.nombre(size=32) }}<br />
+		{% for error in form.nombre.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.dni.label }}<br />
+		{{ form.dni(size=32) }}<br />
+		{% for error in form.dni.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.nivel_acceso.label }}<br />
+		{{ form.nivel_acceso(size=32) }}<br />
+		{% for error in form.nivel_acceso.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.rfid.label }}<br />
+		{{ form.rfid(size=32) }}<br />
+		{% for error in form.rfid.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

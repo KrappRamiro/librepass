@@ -1,12 +1,38 @@
 {%extends "base.html"%} {%block content %}
 <h1>Hola {{current_user.username}}, cómo estas?</h1>
 
-<h2>Estos son los accesos:</h2>
-{%for acceso in accesos%}
 <div>
-	<p>
-		{{acceso.empleado.nombre}} <br />
-		Horario: {{acceso.timestamp}}
-	</p>
+	<style>
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+	</style>
+	<h2>Lista de todos los Accesos</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Horario</th>
+				<th>Fue autorizado?</th>
+				<th>Nombre del empleado</th>
+				<th>Puerta</th>
+				<th>Nota de la puerta</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%for acceso in accesos%}
+			<tr>
+				<td>{{acceso.id}}</td>
+				<td>{{acceso.timestamp}}</td>
+				<td>{{acceso.autorizado}}</td>
+				<td>{{acceso.empleado.nombre}}</td>
+				<td>{{acceso.puerta.id}}</td>
+				<td>{{acceso.puerta.nota}}</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
 </div>
-{%endfor%} {%endblock%}
+{%endblock%}
