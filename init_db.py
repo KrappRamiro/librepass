@@ -1,30 +1,30 @@
 from datetime import date
 
 from webapp import db
-from webapp.db_models import Empleado, Acceso, Puerta
+from webapp.db_models import Employee, Access, Door
 
 try:
     db.create_all()
 
-    if Empleado.query.count() == 0:
+    if Employee.query.count() == 0:
         empleados = [
-            Empleado(nombre='Juan', dni="12678543", nivel_acceso=1, rfid="BD 31 15 2B"),
-            Empleado(nombre='Pepe', dni="98765432", nivel_acceso=3, rfid="AC 35 71 2A"),
-            Empleado(nombre='Agustin', dni="13666666", nivel_acceso=5, rfid="CE 8A 6A 88"),
-            Empleado(nombre='Josesito', dni="87666555", nivel_acceso=1, rfid="AA C8 61 3C"),
+            Employee(name='Juan', dni="12678543", access_level=1, rfid="BD 31 15 2B"),
+            Employee(name='Pepe', dni="98765432", access_level=3, rfid="AC 35 71 2A"),
+            Employee(name='Agustin', dni="13666666", access_level=5, rfid="CE 8A 6A 88"),
+            Employee(name='Josesito', dni="87666555", access_level=1, rfid="AA C8 61 3C"),
         ]
 
         for empleado in empleados:
             db.session.add(empleado)
 
-    if Puerta.query.count() == 0:
-        puertas = [
-            Puerta(nivel_seguridad=1, nota="Puerta de la entrada"),
-            Puerta(nivel_seguridad=3, nota="Puerta del laboratorio"),
-            Puerta(nivel_seguridad=5, nota="Puerta de la sala del CEO")
+    if Door.query.count() == 0:
+        doors = [
+            Door(security_level=1, note="Puerta de la entrada"),
+            Door(security_level=3, note="Puerta del laboratorio"),
+            Door(security_level=5, note="Puerta de la sala del CEO")
         ]
-        for puerta in puertas:
-            db.session.add(puerta)
+        for door in doors:
+            db.session.add(door)
 
     db.session.commit()
 except Exception as e:

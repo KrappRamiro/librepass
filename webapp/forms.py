@@ -35,34 +35,34 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email')
 
 
-class AddEmpleadoForm(FlaskForm):
-    nombre = StringField('Nombre', validators=[DataRequired()])
+class AddEmployeeForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
     dni = StringField('DNI', validators=[DataRequired()])
-    nivel_acceso = IntegerField('Nivel de acceso', validators=[DataRequired()])
+    access_level = IntegerField('Nivel de access', validators=[DataRequired()])
     rfid = StringField('UID del tag RFID', validators=[DataRequired()])
-    submit = SubmitField('Añadir Empleado')
+    submit = SubmitField('Añadir Employee')
 
 
-class AddPuertaForm(FlaskForm):
-    nivel_seguridad = IntegerField(
+class AddDoorForm(FlaskForm):
+    security_level = IntegerField(
         'Nivel de seguridad', validators=[DataRequired()])
-    nota = StringField()
-    submit = SubmitField('Añadir Puerta')
+    note = StringField()
+    submit = SubmitField('Añadir Door')
 
 
 class ConfirmForm(FlaskForm):
     submit = SubmitField('Confirmar')
 
 
-class EditEmpleadoForm(FlaskForm):
-    nombre = StringField('Nombre', validators=[DataRequired()])
+class EditEmployeeForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
     dni = StringField('DNI', validators=[DataRequired()])
-    nivel_acceso = IntegerField('Nivel de acceso', validators=[DataRequired()])
+    access_level = IntegerField('Nivel de access', validators=[DataRequired()])
     rfid = StringField('UID del tag RFID', validators=[DataRequired()])
-    submit = SubmitField('Editar Empleado')
+    submit = SubmitField('Editar Employee')
 
-class EditPuertaForm(FlaskForm):
-    nivel_seguridad = IntegerField(
+class EditDoorForm(FlaskForm):
+    security_level = IntegerField(
         'Nivel de seguridad', validators=[DataRequired()])
-    nota = StringField()
-    submit = SubmitField('Editar Puerta')
+    note = StringField()
+    submit = SubmitField('Editar Door')

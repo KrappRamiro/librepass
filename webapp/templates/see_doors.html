@@ -17,15 +17,15 @@
 		</tr>
 	</thead>
 	<tbody>
-		{%for puerta in puertas%}
+		{%for door in doors%}
 		<tr>
-			<td>{{puerta.id}}</td>
-			<td>{{puerta.nivel_seguridad}}</td>
-			<td>{{puerta.nota}}</td>
+			<td>{{door.id}}</td>
+			<td>{{door.security_level}}</td>
+			<td>{{door.note}}</td>
 			<td>
-				<a href="/delete_puerta/{{puerta.id}}">Delete</a>
+				<a href="/delete_door/{{door.id}}">Borrar</a>
 				<br />
-				<a href="/editar_puerta/{{puerta.id}}">Update</a>
+				<a href="/edit_door/{{door.id}}">Editar</a>
 			</td>
 		</tr>
 		{%endfor%}

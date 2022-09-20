@@ -4,16 +4,16 @@ from webapp import db
 from flask import render_template, request, jsonify, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from webapp.forms import AddEmpleadoForm, AddPuertaForm, ConfirmForm, EditEmpleadoForm, EditPuertaForm, LoginForm, RegistrationForm
-from webapp.db_models import Puerta, User, Acceso, Empleado
+from webapp.forms import AddEmployeeForm, AddDoorForm, ConfirmForm, EditEmployeeForm, EditDoorForm, LoginForm, RegistrationForm
+from webapp.db_models import Door, User, Access, Employee
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    accesos = Acceso.query.all()
-    return render_template("index.html", title="Home page", accesos=accesos)
+    accesses = Access.query.all()
+    return render_template("index.html", title="Home page", accesses=accesses)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -65,161 +65,161 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route('/add_empleado', methods=['GET', 'POST'])
-def add_empleado():
-    form = AddEmpleadoForm()
+@app.route('/add_employee', methods=['GET', 'POST'])
+def add_employee():
+    form = AddEmployeeForm()
     if form.validate_on_submit():
-        empleado = Empleado(
-            nombre=form.nombre.data,
+        employee = Employee(
+            name=form.name.data,
             dni=form.dni.data,
-            nivel_acceso=form.nivel_acceso.data,
+            access_level=form.access_level.data,
             rfid=form.rfid.data
         )
-        db.session.add(empleado)
+        db.session.add(employee)
         db.session.commit()
-        flash(f'Agregado al empleado {form.nombre.data}')
-        return redirect(url_for('add_empleado'))
-    return render_template('add_empleado.html', title='Añadir Empleado', form=form)
+        flash(f'Agregado al employee {form.name.data}')
+        return redirect(url_for('add_employee'))
+    return render_template('add_employee.html', title='Añadir Employee', form=form)
 
 
-@app.route('/add_puerta/', methods=['GET', 'POST'])
-def add_puerta():
-    form = AddPuertaForm()
+@app.route('/add_door/', methods=['GET', 'POST'])
+def add_door():
+    form = AddDoorForm()
     if form.validate_on_submit():
-        puerta = Puerta(
-            nivel_seguridad=form.nivel_seguridad.data,
-            nota=form.nota.data
+        door = Door(
+            security_level=form.security_level.data,
+            note=form.note.data
         )
-        db.session.add(puerta)
+        db.session.add(door)
         db.session.commit()
         flash(
-            f'Agregada la puerta con la nota {form.nota.data}, y el nivel de seguridad {form.nivel_seguridad.data}')
-        return redirect(url_for('add_puerta'))
-    return render_template('add_puerta.html', title='Añadir Puerta', form=form)
+            f'Agregada la door con la note {form.note.data}, y el nivel de seguridad {form.security_level.data}')
+        return redirect(url_for('add_door'))
+    return render_template('add_door.html', title='Añadir Door', form=form)
 
 
-@app.route('/see_empleados')
-def see_empleados():
-    empleados = Empleado.query.all()
-    return render_template('see_empleados.html', title="Lista de Empleados", empleados=empleados)
+@app.route('/see_employees')
+def see_employees():
+    employees = Employee.query.all()
+    return render_template('see_employees.html', title="Lista de Employees", employees=employees)
 
 
-@app.route('/see_puertas')
-def see_puertas():
-    puertas = Puerta.query.all()
-    return render_template('see_puertas.html', title="Lista de Empleados", puertas=puertas)
+@app.route('/see_doors')
+def see_doors():
+    doors = Door.query.all()
+    return render_template('see_doors.html', title="Lista de Employees", doors=doors)
 
 #----------------- Delete urls ------------------#
 
-@app.route('/delete_empleado/<int:id>', methods=['GET', 'POST'])
-def delete_empleado(id):
-    empleado = Empleado.query.filter_by(id=id).first()
+@app.route('/delete_employee/<int:id>', methods=['GET', 'POST'])
+def delete_employee(id):
+    employee = Employee.query.filter_by(id=id).first()
     form = ConfirmForm()
     if form.validate_on_submit():
-        #Borrar al empleado
-        db.session.delete(empleado)
+        #Borrar al employee
+        db.session.delete(employee)
         db.session.commit()
         flash(
-            f'Borrado al empleado'
+            f'Borrado al employee'
         )
-        return redirect(url_for('see_empleados'))
-    return render_template('delete_empleado.html', title="Borrar empleado", form=form, empleado=empleado)
+        return redirect(url_for('see_employees'))
+    return render_template('delete_employee.html', title="Borrar employee", form=form, employee=employee)
 
-@app.route('/delete_puerta/<int:id>', methods=['GET', 'POST'])
-def delete_puerta(id):
-    puerta = Puerta.query.filter_by(id=id).first()
+@app.route('/delete_door/<int:id>', methods=['GET', 'POST'])
+def delete_door(id):
+    door = Door.query.filter_by(id=id).first()
     form = ConfirmForm()
     if form.validate_on_submit():
-        #Borrar la puerta
-        db.session.delete(puerta)
+        #Borrar la door
+        db.session.delete(door)
         db.session.commit()
         flash(
-            f'Borrada la puerta'
+            f'Borrada la door'
         )
-        return redirect(url_for('see_puertas'))
-    return render_template('delete_puerta.html', title="Borrar puerta", form=form, puerta=puerta)
+        return redirect(url_for('see_doors'))
+    return render_template('delete_door.html', title="Borrar door", form=form, door=door)
 
 
 
 #----------------- Edit urls ------------------#
 
-@app.route('/editar_empleado/<int:id>', methods=['GET', 'POST'])
-def editar_empleado(id):
-    form = EditEmpleadoForm()
-    empleado_a_editar = Empleado.query.filter_by(id=id).first()
+@app.route('/edit_employee/<int:id>', methods=['GET', 'POST'])
+def edit_employee(id):
+    form = EditEmployeeForm()
+    employee_to_edit = Employee.query.filter_by(id=id).first()
     if form.validate_on_submit():
-        empleado_a_editar.nombre = form.nombre.data
-        empleado_a_editar.dni = form.dni.data
-        empleado_a_editar.nivel_acceso = form.nivel_acceso.data
-        empleado_a_editar.rfid = form.rfid.data
-        db.session.add(empleado_a_editar)
+        employee_to_edit.name = form.name.data
+        employee_to_edit.dni = form.dni.data
+        employee_to_edit.access_level = form.access_level.data
+        employee_to_edit.rfid = form.rfid.data
+        db.session.add(employee_to_edit)
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('see_empleados'))
+        return redirect(url_for('see_employees'))
     elif request.method == 'GET':
-        form.nombre.data = empleado_a_editar.nombre
-        form.dni.data = empleado_a_editar.dni
-        form.nivel_acceso.data = empleado_a_editar.nivel_acceso
-        form.rfid.data = empleado_a_editar.rfid
-    return render_template('editar_empleado.html', title='Editar Empleado',
+        form.name.data = employee_to_edit.name
+        form.dni.data = employee_to_edit.dni
+        form.access_level.data = employee_to_edit.access_level
+        form.rfid.data = employee_to_edit.rfid
+    return render_template('edit_employee.html', title='Editar Employee',
                            form=form)
 
 
-@app.route('/editar_puerta/<int:id>', methods=['GET', 'POST'])
-def editar_puerta(id):
-    form = EditPuertaForm()
-    puerta_a_editar = Puerta.query.filter_by(id=id).first()
+@app.route('/edit_door/<int:id>', methods=['GET', 'POST'])
+def edit_door(id):
+    form = EditDoorForm()
+    door_to_edit = Door.query.filter_by(id=id).first()
     if form.validate_on_submit():
-        puerta_a_editar.nivel_seguridad = form.nivel_seguridad.data
-        puerta_a_editar.nota = form.nota.data
-        db.session.add(puerta_a_editar)
+        door_to_edit.security_level = form.security_level.data
+        door_to_edit.note = form.note.data
+        db.session.add(door_to_edit)
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('see_puertas'))
+        return redirect(url_for('see_doors'))
     elif request.method == 'GET':
-        form.nota.data = puerta_a_editar.nota
-        form.nivel_seguridad.data = puerta_a_editar.nivel_seguridad
-    return render_template('editar_puerta.html', title='Editar Puerta',
+        form.note.data = door_to_edit.note
+        form.security_level.data = door_to_edit.security_level
+    return render_template('edit_door.html', title='Editar Door',
                            form=form)
 
 
 # ------------------- API ROUTES ----------------------- #
 
 
-@app.route('/api/let_employee_pass/<string:rfid>/<int:puerta>')
-def get_empleado(rfid, puerta):
-    empleado = Empleado.query.filter_by(rfid=rfid).first()
-    puerta = Puerta.query.filter_by(id=puerta).first()
+@app.route('/api/let_employee_pass/<string:rfid>/<int:door>')
+def get_employee(rfid, door):
+    employee = Employee.query.filter_by(rfid=rfid).first()
+    door = Door.query.filter_by(id=door).first()
     # ------------ Inicio de checkeo de existencia de datos en la base de datos ------------------- #
-    if empleado == None:
+    if employee == None:
         return {
             'mensaje': f'El RFID {rfid} no fue encontrado en la base de datos',
-            'acceso': False
+            'access': False
         }
-    elif puerta == None:
+    elif door == None:
         return {
-            'mensaje': f'La puerta no fue encontrada',
-            'acceso': False
+            'mensaje': f'La door no fue encontrada',
+            'access': False
         }
 
     # ------------ Fin de checkeo de existencia de datos en la base de datos ------------------- #
-    # Si el empleado NO tiene el nivel de seguridad necesario
-    if (empleado.nivel_acceso >= puerta.nivel_seguridad) == False:
+    # Si el employee NO tiene el nivel de seguridad necesario
+    if (employee.access_level >= door.security_level) == False:
         respuesta = {
-            'mensaje': f"El empleado {empleado.nombre} con el nivel de acceso {empleado.nivel_acceso} NO ha sido autorizado a pasar por la puerta {puerta.id}",
-            'acceso': False
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} NO ha sido authorized a pasar por la door {door.id}",
+            'access': False
         }
-        autorizado = False
-    # Si el empleado SI tiene el nivel de seguridad necesario
+        authorized = False
+    # Si el employee SI tiene el nivel de seguridad necesario
     else:
         respuesta = {
-            'mensaje': f"El empleado {empleado.nombre} con el nivel de acceso {empleado.nivel_acceso} ha sido autorizado a pasar por la puerta {puerta.id} con el nivel de seguridad {puerta.nivel_seguridad}",
-            'acceso': True
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} ha sido authorized a pasar por la door {door.id} con el nivel de seguridad {door.security_level}",
+            'access': True
         }
-        autorizado = True
-    # Agregar acceso (permitido o denegado, cualsea) en la base de datos
-    acceso = Acceso(empleado=empleado, puerta=puerta, autorizado=autorizado)
-    db.session.add(acceso)
+        authorized = True
+    # Agregar access (permitido o denegado, cualsea) en la base de datos
+    access = Access(employee=employee, door=door, authorized=authorized)
+    db.session.add(access)
     db.session.commit()
     return respuesta
 

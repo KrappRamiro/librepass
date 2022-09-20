@@ -15,22 +15,22 @@
 				<th>ID</th>
 				<th>Nombre</th>
 				<th>DNI</th>
-				<th>Nivel de Acceso</th>
+				<th>Nivel de acceso</th>
 				<th>RFID</th>
 			</tr>
 		</thead>
 		<tbody>
-			{%for empleado in empleados%}
+			{%for employee in employees%}
 			<tr>
-				<td>{{empleado.id}}</td>
-				<td>{{empleado.nombre}}</td>
-				<td>{{empleado.dni}}</td>
-				<td>{{empleado.nivel_acceso}}</td>
-				<td>{{empleado.rfid}}</td>
+				<td>{{employee.id}}</td>
+				<td>{{employee.name}}</td>
+				<td>{{employee.dni}}</td>
+				<td>{{employee.access_level}}</td>
+				<td>{{employee.rfid}}</td>
 				<td>
-					<a href="/delete_empleado/{{empleado.id}}">Delete</a>
+					<a href="/delete_employee/{{employee.id}}">Borrar</a>
 					<br />
-					<a href="/edit_empleado/{{empleado.id}}">Update</a>
+					<a href="/edit_employee/{{employee.id}}">Editar</a>
 				</td>
 			</tr>
 			{%endfor%}

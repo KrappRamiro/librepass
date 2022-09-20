@@ -22,14 +22,14 @@
 			</tr>
 		</thead>
 		<tbody>
-			{%for acceso in accesos%}
+			{%for access in accesses%}
 			<tr>
-				<td>{{acceso.id}}</td>
-				<td>{{acceso.timestamp}}</td>
-				<td>{{acceso.autorizado}}</td>
-				<td>{{acceso.empleado.nombre}}</td>
-				<td>{{acceso.puerta.id}}</td>
-				<td>{{acceso.puerta.nota}}</td>
+				<td>{{access.id}}</td>
+				<td>{{access.timestamp}}</td>
+				<td>{{access.authorized}}</td>
+				<td>{{access.employee.name}}</td>
+				<td>{{access.door.id}}</td>
+				<td>{{access.door.note}}</td>
 			</tr>
 			{%endfor%}
 		</tbody>

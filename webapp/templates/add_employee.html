@@ -4,9 +4,9 @@
 <form action="" method="post">
 	{{form.hidden_tag()}}
 	<p>
-		{{ form.nombre.label}} <br />
-		{{ form.nombre(size=32)}} <br />
-		{%for error in form.nombre.errors%}
+		{{ form.name.label}} <br />
+		{{ form.name(size=32)}} <br />
+		{%for error in form.name.errors%}
 		<span style="color: red">[{{error}}]</span>
 		{%endfor%}
 	</p>
@@ -19,9 +19,9 @@
 		{%endfor%}
 	</p>
 	<p>
-		{{ form.nivel_acceso.label }}<br />
-		{{ form.nivel_acceso(size=32) }}<br />
-		{% for error in form.nivel_acceso.errors %}
+		{{ form.access_level.label }}<br />
+		{{ form.access_level(size=32) }}<br />
+		{% for error in form.access_level.errors %}
 		<span style="color: red">[{{ error }}]</span>
 		{% endfor %}
 	</p>
