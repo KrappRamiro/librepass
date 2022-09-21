@@ -12,8 +12,7 @@ from webapp.db_models import Door, User, Access, Employee
 @app.route('/index')
 @login_required
 def index():
-    accesses = Access.query.all()
-    return render_template("index.html", title="Home page", accesses=accesses)
+    return render_template("index.html", title="Home page")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -22,6 +21,7 @@ def login():
         return redirect(url_for('index'))
     # What I did here is import the LoginForm class from forms.py, instantiated an object from it, and sent it down to the template
     form = LoginForm()
+    print(f"login -- valor de form.validate: {form.validate_on_submit()}")
     if form.validate_on_submit():  # If the form is validated
         # Get the user with the name that was introduced in the form
         user = User.query.filter_by(username=form.username.data).first()
@@ -45,6 +45,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -66,6 +67,7 @@ def register():
 
 
 @app.route('/add_employee', methods=['GET', 'POST'])
+@login_required
 def add_employee():
     form = AddEmployeeForm()
     if form.validate_on_submit():
@@ -83,6 +85,7 @@ def add_employee():
 
 
 @app.route('/add_door/', methods=['GET', 'POST'])
+@login_required
 def add_door():
     form = AddDoorForm()
     if form.validate_on_submit():
@@ -99,24 +102,33 @@ def add_door():
 
 
 @app.route('/see_employees')
+@login_required
 def see_employees():
     employees = Employee.query.all()
-    return render_template('see_employees.html', title="Lista de Employees", employees=employees)
+    return render_template('see_employees.html', title="Lista de Empleados", employees=employees)
 
 
 @app.route('/see_doors')
+@login_required
 def see_doors():
     doors = Door.query.all()
-    return render_template('see_doors.html', title="Lista de Employees", doors=doors)
+    return render_template('see_doors.html', title="Lista de Puertas", doors=doors)
 
+
+@app.route('/see_accesses')
+@login_required
+def see_accesses():
+    accesses = Access.query.all()
+    return render_template('see_accesses.html', title="Lista de Accessos", accesses=accesses)
 #----------------- Delete urls ------------------#
+
 
 @app.route('/delete_employee/<int:id>', methods=['GET', 'POST'])
 def delete_employee(id):
     employee = Employee.query.filter_by(id=id).first()
     form = ConfirmForm()
     if form.validate_on_submit():
-        #Borrar al employee
+        # Borrar al employee
         db.session.delete(employee)
         db.session.commit()
         flash(
@@ -125,12 +137,13 @@ def delete_employee(id):
         return redirect(url_for('see_employees'))
     return render_template('delete_employee.html', title="Borrar employee", form=form, employee=employee)
 
+
 @app.route('/delete_door/<int:id>', methods=['GET', 'POST'])
 def delete_door(id):
     door = Door.query.filter_by(id=id).first()
     form = ConfirmForm()
     if form.validate_on_submit():
-        #Borrar la door
+        # Borrar la door
         db.session.delete(door)
         db.session.commit()
         flash(
@@ -138,7 +151,6 @@ def delete_door(id):
         )
         return redirect(url_for('see_doors'))
     return render_template('delete_door.html', title="Borrar door", form=form, door=door)
-
 
 
 #----------------- Edit urls ------------------#

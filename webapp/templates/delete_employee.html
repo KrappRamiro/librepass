@@ -1,4 +1,6 @@
 {%extends 'base.html'%} {% block content%}
+
+<div class="container-fluid" style="margin-top: 80px">
 <h1>
 	Estas seguro de que quieres borrar al empleado {{employee.name}}?
 </h1>
@@ -11,4 +13,5 @@
 
 	<p>{{form.submit()}}</p>
 </form>
+</div>
 {%endblock%}

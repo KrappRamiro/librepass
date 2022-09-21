@@ -1,35 +1,32 @@
 {%extends 'base.html'%} {% block content%}
 
-<style>
-	table,
-	th,
-	td {
-		border: 1px solid black;
-	}
-</style>
-<h1>Lista de todas las puertas</h1>
-<table>
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>Nivel de seguridad</th>
-			<th>Nota</th>
-		</tr>
-	</thead>
-	<tbody>
-		{%for door in doors%}
-		<tr>
-			<td>{{door.id}}</td>
-			<td>{{door.security_level}}</td>
-			<td>{{door.note}}</td>
-			<td>
-				<a href="/delete_door/{{door.id}}">Borrar</a>
-				<br />
-				<a href="/edit_door/{{door.id}}">Editar</a>
-			</td>
-		</tr>
-		{%endfor%}
-	</tbody>
-</table>
+<div class="container-fluid">
+	<h1>Lista de todas las puertas</h1>
+	<table class="table table-bordered table-hover">
+		<thead class="table-dark">
+			<tr>
+				<th>ID</th>
+				<th>Nivel de seguridad</th>
+				<th>Nota</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%for door in doors%}
+			<tr>
+				<td>{{door.id}}</td>
+				<td>{{door.security_level}}</td>
+				<td>{{door.note}}</td>
+				<td>
+					<div class="btn-group btn-group-sm">
+						<a class="btn btn-warning" href="/edit_door/{{door.id}}">Editar</a>
+						<a class="btn btn-danger" href="/delete_door/{{door.id}}">Borrar</a>
+					</div>
+				</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
+</div>
 
 {%endblock%}

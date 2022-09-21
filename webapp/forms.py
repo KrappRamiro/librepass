@@ -8,46 +8,46 @@ from webapp.db_models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    username = StringField('Usuario', validators=[DataRequired()])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    remember_me = BooleanField('Recuerdame')
+    submit = SubmitField('Iniciar Sesion')
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Nombre de usuario', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password', validators=[
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    password2 = PasswordField('Repite la contraseña', validators=[
         DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    submit = SubmitField('Registrarse')
 
     def validate_username(self, username):
         # Query the database to see if an username with the name introduced already exists
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
-            raise ValidationError('Please use a different username')
+            raise ValidationError('Por favor usa un nombre de usuario distinto')
 
     def validate_email(self, email):
         # Query the database to see if the email is already in use
         email = User.query.filter_by(email=email.data).first()
         if email is not None:
-            raise ValidationError('Please use a different email')
+            raise ValidationError('Por favor usa un email distinto')
 
 
 class AddEmployeeForm(FlaskForm):
     name = StringField('Nombre', validators=[DataRequired()])
     dni = StringField('DNI', validators=[DataRequired()])
-    access_level = IntegerField('Nivel de access', validators=[DataRequired()])
+    access_level = IntegerField('Nivel de acceso', validators=[DataRequired()])
     rfid = StringField('UID del tag RFID', validators=[DataRequired()])
-    submit = SubmitField('Añadir Employee')
+    submit = SubmitField('Añadir Empleado')
 
 
 class AddDoorForm(FlaskForm):
     security_level = IntegerField(
         'Nivel de seguridad', validators=[DataRequired()])
     note = StringField()
-    submit = SubmitField('Añadir Door')
+    submit = SubmitField('Añadir Puerta')
 
 
 class ConfirmForm(FlaskForm):
@@ -57,12 +57,12 @@ class ConfirmForm(FlaskForm):
 class EditEmployeeForm(FlaskForm):
     name = StringField('Nombre', validators=[DataRequired()])
     dni = StringField('DNI', validators=[DataRequired()])
-    access_level = IntegerField('Nivel de access', validators=[DataRequired()])
+    access_level = IntegerField('Nivel de acceso', validators=[DataRequired()])
     rfid = StringField('UID del tag RFID', validators=[DataRequired()])
-    submit = SubmitField('Editar Employee')
+    submit = SubmitField('Editar Empleado')
 
 class EditDoorForm(FlaskForm):
     security_level = IntegerField(
         'Nivel de seguridad', validators=[DataRequired()])
     note = StringField()
-    submit = SubmitField('Editar Door')
+    submit = SubmitField('Editar Puerta')

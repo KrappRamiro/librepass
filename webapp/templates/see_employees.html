@@ -1,22 +1,16 @@
 {%extends 'base.html'%} {% block content%}
 
-<body>
-	<style>
-		table,
-		th,
-		td {
-			border: 1px solid black;
-		}
-	</style>
+<div class="container-fluid">
 	<h1>Lista de todos los empleados</h1>
-	<table>
-		<thead>
+	<table class="table table-bordered table-hover">
+		<thead class="table-dark">
 			<tr>
 				<th>ID</th>
 				<th>Nombre</th>
 				<th>DNI</th>
 				<th>Nivel de acceso</th>
 				<th>RFID</th>
+				<th>Acciones</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -28,14 +22,14 @@
 				<td>{{employee.access_level}}</td>
 				<td>{{employee.rfid}}</td>
 				<td>
-					<a href="/delete_employee/{{employee.id}}">Borrar</a>
-					<br />
-					<a href="/edit_employee/{{employee.id}}">Editar</a>
+					<div class="btn-group btn-group-sm">
+						<a class="btn btn-warning" href="/edit_employee/{{employee.id}}">Editar</a>
+						<a class="btn btn-danger" href="/delete_employee/{{employee.id}}">Borrar</a>
+					</div>
 				</td>
 			</tr>
 			{%endfor%}
 		</tbody>
 	</table>
-</body>
 
 {%endblock%}
