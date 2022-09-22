@@ -1,4 +1,14 @@
 {%extends "base.html"%} {%block content %}
-<h1>Hola {{current_user.username}}, cómo estas?</h1>
-
-{%endblock%}
+<div class="container-fluid">
+	{% if current_user.is_anonymous %}
+	<h1>Bienvenido</h1>
+	Para comenzar a usar el sistema,
+	<a href="{{url_for('login')}}">inicia sesión</a>
+	<br />
+	Si no tienes una cuenta,
+	<a href="{{url_for('register')}}">registrate</a>
+	{%else%}
+	<h1>Hola {{current_user.username}}, cómo estas?</h1>
+	Usa la barra de navegación superior para navegar entre las distintas funciones
+	del sistema. {%endif%} {%endblock%}
+</div>

@@ -10,28 +10,23 @@ from webapp.db_models import Door, User, Access, Employee
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     return render_template("index.html", title="Home page")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:  # If the current user from flask_login is authenticated
+    if current_user.is_authenticated:
         return redirect(url_for('index'))
-    # What I did here is import the LoginForm class from forms.py, instantiated an object from it, and sent it down to the template
     form = LoginForm()
-    print(f"login -- valor de form.validate: {form.validate_on_submit()}")
-    if form.validate_on_submit():  # If the form is validated
-        # Get the user with the name that was introduced in the form
+    if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        # Check if there was an User introduced or if the password was not correct
-        if user is None or not user.check_password(form.password.data):
-            # If the password was NOT correct, flash a message and redirect again to login
-            flash('Invalid username or password')
+        if user is None:
+            flash('Usuario incorrecto', category='danger')
             return redirect(url_for('login'))
-        # If the password WAS correct, login the user and redirect to index
-        # login_user also gives a value to the variable current_user
+        if user.check_password(form.password.data) == False:
+            flash('Contraseña invalida', category='danger')
+            return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         # Next page is used for redirecting to a page that has the @login_required
         # This line gets the next query from an url like:       /login?next=/index
@@ -41,7 +36,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(url_for('index'))
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Iniciar Sesion', form=form)
 
 
 @app.route('/logout')
@@ -61,7 +56,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash('Congratulations, you are now a registered user!', category="success")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -79,12 +74,12 @@ def add_employee():
         )
         db.session.add(employee)
         db.session.commit()
-        flash(f'Agregado al employee {form.name.data}')
+        flash(f'Agregado al employee {form.name.data}', category="success")
         return redirect(url_for('add_employee'))
     return render_template('add_employee.html', title='Añadir Employee', form=form)
 
 
-@app.route('/add_door/', methods=['GET', 'POST'])
+@app.route('/add_door', methods=['GET', 'POST'])
 @login_required
 def add_door():
     form = AddDoorForm()
@@ -96,7 +91,7 @@ def add_door():
         db.session.add(door)
         db.session.commit()
         flash(
-            f'Agregada la door con la note {form.note.data}, y el nivel de seguridad {form.security_level.data}')
+            f'Agregada la door con la note {form.note.data}, y el nivel de seguridad {form.security_level.data}', category="success")
         return redirect(url_for('add_door'))
     return render_template('add_door.html', title='Añadir Door', form=form)
 
@@ -120,6 +115,7 @@ def see_doors():
 def see_accesses():
     accesses = Access.query.all()
     return render_template('see_accesses.html', title="Lista de Accessos", accesses=accesses)
+
 #----------------- Delete urls ------------------#
 
 
@@ -131,11 +127,9 @@ def delete_employee(id):
         # Borrar al employee
         db.session.delete(employee)
         db.session.commit()
-        flash(
-            f'Borrado al employee'
-        )
+        flash(f'Borrado al empleado', category="success")
         return redirect(url_for('see_employees'))
-    return render_template('delete_employee.html', title="Borrar employee", form=form, employee=employee)
+    return render_template('delete_employee.html', title="Borrar empleado", form=form, employee=employee)
 
 
 @app.route('/delete_door/<int:id>', methods=['GET', 'POST'])
@@ -146,11 +140,9 @@ def delete_door(id):
         # Borrar la door
         db.session.delete(door)
         db.session.commit()
-        flash(
-            f'Borrada la door'
-        )
+        flash(f'Borrada la puerta', category="success")
         return redirect(url_for('see_doors'))
-    return render_template('delete_door.html', title="Borrar door", form=form, door=door)
+    return render_template('delete_door.html', title="Borrar puerta", form=form, door=door)
 
 
 #----------------- Edit urls ------------------#
@@ -166,14 +158,14 @@ def edit_employee(id):
         employee_to_edit.rfid = form.rfid.data
         db.session.add(employee_to_edit)
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Los cambios han sido guardados.', category="success")
         return redirect(url_for('see_employees'))
     elif request.method == 'GET':
         form.name.data = employee_to_edit.name
         form.dni.data = employee_to_edit.dni
         form.access_level.data = employee_to_edit.access_level
         form.rfid.data = employee_to_edit.rfid
-    return render_template('edit_employee.html', title='Editar Employee',
+    return render_template('edit_employee.html', title='Editar Empleado',
                            form=form)
 
 
@@ -186,12 +178,12 @@ def edit_door(id):
         door_to_edit.note = form.note.data
         db.session.add(door_to_edit)
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Los cambios han sido guardados.', category="success")
         return redirect(url_for('see_doors'))
     elif request.method == 'GET':
         form.note.data = door_to_edit.note
         form.security_level.data = door_to_edit.security_level
-    return render_template('edit_door.html', title='Editar Door',
+    return render_template('edit_door.html', title='Editar Puerta',
                            form=form)
 
 
