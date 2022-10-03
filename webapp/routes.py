@@ -1,4 +1,4 @@
-from re import A
+import logging as log
 from webapp import app
 from webapp import db
 from flask import render_template, request, jsonify, redirect, url_for, flash
@@ -56,7 +56,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!', category="success")
+        flash('Felicitaciones, ahora sos un usuario registrado!', category="success")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -74,7 +74,7 @@ def add_employee():
         )
         db.session.add(employee)
         db.session.commit()
-        flash(f'Agregado al employee {form.name.data}', category="success")
+        flash(f'Agregado al empleado {form.name.data}', category="success")
         return redirect(url_for('add_employee'))
     return render_template('add_employee.html', title='Añadir Employee', form=form)
 
@@ -91,7 +91,7 @@ def add_door():
         db.session.add(door)
         db.session.commit()
         flash(
-            f'Agregada la door con la note {form.note.data}, y el nivel de seguridad {form.security_level.data}', category="success")
+            f'Agregada la puerta con la nota {form.note.data}, y el nivel de seguridad {form.security_level.data}', category="success")
         return redirect(url_for('add_door'))
     return render_template('add_door.html', title='Añadir Door', form=form)
 
@@ -192,34 +192,39 @@ def edit_door(id):
 
 @app.route('/api/let_employee_pass/<string:rfid>/<int:door>')
 def get_employee(rfid, door):
+    rfid = rfid.replace('_', ' ')  # Replaces all the _ to whitespace
     employee = Employee.query.filter_by(rfid=rfid).first()
     door = Door.query.filter_by(id=door).first()
     # ------------ Inicio de checkeo de existencia de datos en la base de datos ------------------- #
     if employee == None:
-        return {
+        log.warning("Se pidio acceso con un RFID no existente")
+        return jsonify({
             'mensaje': f'El RFID {rfid} no fue encontrado en la base de datos',
             'access': False
-        }
+        }), 403
     elif door == None:
-        return {
+        log.warning("Se pidio acceso con un RFID no existente")
+        return jsonify({
             'mensaje': f'La door no fue encontrada',
             'access': False
-        }
+        }), 403
 
     # ------------ Fin de checkeo de existencia de datos en la base de datos ------------------- #
     # Si el employee NO tiene el nivel de seguridad necesario
     if (employee.access_level >= door.security_level) == False:
-        respuesta = {
-            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} NO ha sido authorized a pasar por la door {door.id}",
+        log.warning("Se pidio acceso pero no fue autorizado")
+        respuesta = jsonify({
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} NO ha sido autorizado a pasar por la door {door.id}",
             'access': False
-        }
+        }),403
         authorized = False
     # Si el employee SI tiene el nivel de seguridad necesario
     else:
-        respuesta = {
-            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} ha sido authorized a pasar por la door {door.id} con el nivel de seguridad {door.security_level}",
+        log.info("Se pidio acceso y fue autorizado")
+        respuesta = jsonify({
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} ha sido autorizado a pasar por la door {door.id} con el nivel de seguridad {door.security_level}",
             'access': True
-        }
+        }), 200
         authorized = True
     # Agregar access (permitido o denegado, cualsea) en la base de datos
     access = Access(employee=employee, door=door, authorized=authorized)

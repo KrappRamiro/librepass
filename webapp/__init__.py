@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5b3cd5b80eb8b217c20fb37074ff4a33'
@@ -39,5 +40,8 @@ and only redirect back to the page the user wanted to view after the login proce
 The 'login' value below is the function (or endpoint) name for the login view. In other words, the name you would use in a url_for() call to get the URL.
 '''
 login.login_view = 'login'
-
+logging.basicConfig(
+    format='%(asctime)s\t%(levelname)s\t| %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    )
 from webapp import routes

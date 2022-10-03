@@ -1,20 +1,4 @@
 #include "krapp_utils.h"
-String getDateTime()
-{
-	/*
-	Esta funcion retorna la fecha y hora en el formato: dd/mm/yyyy hh:mm:ss
-	Args:
-		None
-	Returns:
-		String con la fecha y hora
-	*/
-	time_t now
-		= time(nullptr);
-	struct tm* timeinfo = localtime(&now);
-	char buffer[80];
-	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
-	return buffer;
-}
 String getUID(MFRC522& rfid_mfrc522)
 {
 	/*
@@ -126,65 +110,4 @@ String getSerialStringInput()
 	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
 	Log.infoln("Received the input: %s", userInput); // Imprimo el input
 	return userInput; // Devuelvo el input
-}
-
-int menu()
-{
-	/*
-	Esta funcion imprime el menu en el Serial
-	Args:
-		None
-	Returns:
-		int con la opcion elegida por el usuario
-	*/
-
-	//  TODO: Reemplazar una parte de los contenidos de esta funcion
-	//   con un llamado a getUserSerialInput
-	Serial.println(F("\nElige una opcion"));
-	Serial.println(F("0 - Leer data"));
-	Serial.println(F("1 - Escribir data\n"));
-	Serial.println(F("2 - leer nombre empleado\n"));
-
-	// waits while the user does not start data
-	while (!Serial.available()) { };
-
-	// retrieves the chosen option
-	int op = (int)Serial.read();
-
-	// remove all characters after option (as \n per example)
-	while (Serial.available()) {
-		if (Serial.read() == '\n')
-			break;
-		Serial.read();
-	}
-	return (op - 48); // subtract 48 from read value, 48 is the zero from ascii table
-}
-
-void notFound(AsyncWebServerRequest* request)
-{
-	request->send(404, "text/plain", "Not found");
-	return;
-}
-
-String processor(const String& var)
-{
-	/*
-	Esta funcion procesa los placeholders que se encuentran en el index.html
-	Args:
-		var: String con el placeholder a procesar
-	Returns:
-		String con el valor de el placeholder procesado
-	*/
-	Log.info(F("The processor function is processing: %s" CR), var);
-	if (var == "TEMPERATURE") {
-		return String("Consiguiendo temperatura...");
-	} else if (var == "HUMIDITY") {
-		return String("Consiguiendo humedad...");
-	} else if (var == "HOUR") {
-		return String("Consiguiendo hora...");
-	} else if (var == "SE_LEYO") {
-		return String("Esperando lectura");
-	} else {
-		return String("");
-	}
 }
