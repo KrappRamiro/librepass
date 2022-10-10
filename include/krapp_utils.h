@@ -1,14 +1,17 @@
 #ifndef krapp_utils
 #define krapp_utils
 
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include <Arduino.h>
-#include <ArduinoLog.h>
 #include <MFRC522.h> //library responsible for communicating with the module RFID-RC522
 #include <SPI.h> //library responsible for communicating of SPI bus
 #include <WiFi.h>
-#include <iostream>
-#include <time.h>
-#include <vector>
+#include <Wire.h>
+
+#define SCREEN_WIDTH 128 // OLED width,  in pixels
+#define SCREEN_HEIGHT 64 // OLED height, in pixels
+#define doorNumber 2 // numero de puerta que le paso a la API
 
 String getUID(MFRC522& rfid_mfrc522);
 

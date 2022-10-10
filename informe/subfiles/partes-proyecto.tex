@@ -325,14 +325,37 @@ siguiente manera: Hay 16 sectores de 4 bloques, y cada bloque contiene 16 bytes.
 	\includegraphics[width=0.7\textwidth]{rfid-mapeo-memoria.png}
 \end{figure}
 
-\subsection{El Webserver asincrónico}
-Para este proyecto, se usó un sistema de servidor web integrado en el DOIT DevKit V1 ESP32
-\todo{meter captura de la pagina web}
-\todo{meter pedazo de codigo de los server.on, el processor y el javascript}
-
-\subsection{Framework Arduino}
+\subsection{Frameworks y demás}
+\subsubsection{Arduino}
 Para este proyecto, se uso el framework Arduino, que provee una amplia variedad de
 clases, metodos y funciones útiles para el desarrollo en sistemas embebidos.
+
+Este framework se implementó a través de platformIO, una extensión de Visual Studio Code.
+
+En este proyecto, todo el desarrollo del ESP32 fue hecho mediante este framework.
+
+\subsubsection{Flask}
+Flask es un microframework usado para crear aplicaciones webs. Este, al ser modular y escalable, tiene la posibilidad
+de permitir el agregado de ORM's (Object Relational Manager), routers, renderizador de templates, sistema de logins,
+sistema de Forms, etc...
+
+En este proyecto, Flask se usó para el desarrollo del backend, incluyendo la API.
+
+\subsubsection{Bootstrap}
+
+Bootstrap es el framework CSS más popular para desarrollar aplicaciones responsivas y aptas para dispositivos móviles.
+
+En este proyecto, Bootstrap se usó la versión 5 para el desarrollo del frontend.
+
+\subsubsection{Amazon Web Services (AWS)}
+
+Amazon Web Services (AWS) es la plataforma cloud más adoptada en el mundo, con más de 200 servicios distintos.
+
+En este proyecto, AWS se usó para la implementación de la infrastructura de la webapp.
+Se usarón los servicios de Relational Database Service (RDS) y Elastic Beanstalk.
+
+\begin{comment}
+
 Segun la referencia de Arduino\cite{arduino_reference}, estas son las cosas que
 el framework provee:
 
@@ -618,6 +641,7 @@ el framework provee:
 		\item \^~= (compound bitwise xor)
 		\item |= (compound bitwise or)
 	\end{itemize}
-
+	
 \end{multicols}
+\end{comment}
 \end{document}

@@ -1,4 +1,6 @@
 \documentclass[../informe_krapp.tex]{subfiles}
+\usemintedstyle{vim}
+
 \begin{document}
 \section{Codigo del programa}
 El codigo de programa fue escrito usando Visual Studio Code, usando la extensión
@@ -14,10 +16,109 @@ Para una mejor organización, se dividió en tres branches principales:
 	      tema que se desarrolla, se usaba una de estas y despues se mergeaba con dev)
 \end{enumerate}
 
-\inputminted %TODO: ponerle inconsolata
+
+\inputminted
 [frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
-	label=Codigo principal]
+	label=Archivo platformio.ini usado para la configuracion de platformIO]
+{ini}{../platformio.ini}
+
+% -------------- Codigo del ESP32 ---------------
+
+\inputminted %TODO: ponerle una mejor font
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Codigo del ESP32]
 {cpp}{../src/main.cpp}
 
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Archivo de utilidades]
+{cpp}{../src/krapp_utils.cpp}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Imagenes del OLED]
+{cpp}{../include/oled_images.h}
+
+% ---------------- WEBAPP ------------------
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+label=Archivo init para la creacion del paquete webapp]
+{py}{../webapp/__init__.py}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Modelos de la base de datos]
+{py}{../webapp/db_models.py}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Forms usados para el ingreso de datos]
+{py}{../webapp/forms.py}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Codigo base del html]
+{html}{../webapp/templates/base.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Codigo base del html]
+{html}{../webapp/templates/add_door.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para añadir empleados]
+{html}{../webapp/templates/add_employee.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para borrar puertas]
+{html}{../webapp/templates/delete_door.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para borrar empleados]
+{html}{../webapp/templates/delete_employee.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para editar puertas]
+{html}{../webapp/templates/edit_door.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para editar empleados html]
+{html}{../webapp/templates/edit_employee.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina de inicio html]
+{html}{../webapp/templates/index.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para iniciar sesion]
+{html}{../webapp/templates/login.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para registrarse]
+{html}{../webapp/templates/register.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para ver los accesos]
+{html}{../webapp/templates/see_accesses.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para ver las puertas]
+{html}{../webapp/templates/see_doors.html}
+
+\inputminted
+[frame= lines, linenos, breaklines, tabsize = 3, fontsize=\footnotesize,
+	label=Pagina para ver los empleados]
+{html}{../webapp/templates/see_employees.html}
 
 \end{document}

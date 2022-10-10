@@ -108,6 +108,6 @@ String getSerialStringInput()
 	Serial.setTimeout(30000L); // 30 segundos de timeout
 	Serial.println(F("Enter the data to be written with the '*' character at the end:\n"));
 	String userInput = Serial.readStringUntil('*'); // Lee hasta que encuentra un *
-	Log.infoln("Received the input: %s", userInput); // Imprimo el input
+	Serial.printf("Received the input: %s", userInput); // Imprimo el input
 	return userInput; // Devuelvo el input
 }
