@@ -1,14 +1,16 @@
 #include "ArduinoJson.h"
 #include "HTTPClient.h"
+#include "Wire.h"
 #include "krapp_utils.h"
 #include "oled_images.h"
-#include "Wire.h"
 #define SS_PIN 5 // Pin de SDA del MFRC522
-#define RST_PIN 4 // Pin de RST del MFRC522
+#define RST_PIN 22 // Pin de RST del MFRC522
 #define SIZE_BUFFER 18 // Este es el tamaño del buffer con el que voy a estar trabajando.
 // Por que es 18? Porque son 16 bytes de los datos del tag, y 2 bytes de checksum
 #define MAX_SIZE_BLOCK 16 // algo del RFID
-
+#define I2C_SDA 26
+#define I2C_SCL 27
+#define RELAY 2
 //------------------ INICIO DE Configuracion de conexion a internet ----------------
 const char* ssid = "TeleCentro-882b"; // Nombre de la red
 const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
@@ -42,11 +44,9 @@ void displayMenu()
 
 void setup()
 {
+	Wire.begin(I2C_SDA, I2C_SCL);
 	// Prendo el led de la placa cuando inicia el sistema
-	pinMode(LED_BUILTIN, OUTPUT);
-	digitalWrite(LED_BUILTIN, HIGH);
-	delay(1000);
-	digitalWrite(LED_BUILTIN, LOW);
+	pinMode(RELAY, OUTPUT);
 	Serial.begin(9600);
 	SPI.begin(); // Inicio el bus SPI
 
@@ -157,7 +157,7 @@ void loop()
 	Serial.print("La UID leida es: ");
 	Serial.println(uid);
 	uid.replace(" ", "_"); // Le pongo _ a los espacios de la UID
-	//String request = "http://192.168.33.62:5000/api/let_employee_pass/";
+	// String request = "http://192.168.33.62:5000/api/let_employee_pass/";
 	String request = "http://192.168.0.70:5000/api/let_employee_pass/";
 	request = request + uid + "/" + doorNumber; // armo la request
 	http.begin(request); // Start the request
@@ -174,6 +174,7 @@ void loop()
 	bool acceso = doc["access"];
 	if (acceso) {
 		Serial.println("Activando la cerradura");
+		digitalWrite(RELAY, HIGH); // Activo la cerradura
 		// display bitmap
 		for (int i = 0; i < 3; i++) {
 			displayMenu();
@@ -185,6 +186,7 @@ void loop()
 			oled.display();
 			delay(250);
 		}
+		digitalWrite(RELAY, LOW); // Desactivo la cerradura despues de la animacion
 	} else {
 		// display bitmap
 		for (int i = 0; i < 3; i++) {
