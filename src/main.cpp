@@ -157,8 +157,7 @@ void loop()
 	Serial.print("La UID leida es: ");
 	Serial.println(uid);
 	uid.replace(" ", "_"); // Le pongo _ a los espacios de la UID
-	// String request = "http://192.168.33.62:5000/api/let_employee_pass/";
-	String request = "http://192.168.0.70:5000/api/let_employee_pass/";
+	String request = "http://librepass-env.us-east-1.elasticbeanstalk.com/api/let_employee_pass/";
 	request = request + uid + "/" + doorNumber; // armo la request
 	http.begin(request); // Start the request
 	http.GET(); // Use HTTP GET request

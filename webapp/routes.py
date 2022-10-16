@@ -74,7 +74,7 @@ def add_employee():
         )
         db.session.add(employee)
         db.session.commit()
-        flash(f'Agregado al empleado {form.name.data}', category="success")
+        flash(f'Añadido al empleado {form.name.data}', category="success")
         return redirect(url_for('add_employee'))
     return render_template('add_employee.html', title='Añadir Employee', form=form)
 
