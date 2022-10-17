@@ -54,10 +54,10 @@
 
 					<!-- Password input -->
 					<div class="form-outline form-floating mb-3">
-						{{form.password( type="password", id="form-contraseña",
+						{{form.password( type="password", id="form-contrasena",
 						class="form-control form-control-lg", placeholder="Ingresa tu
 						contraseña" )}}
-						<label class="form-label" for="form-contraseña">Contraseña</label>
+						<label class="form-label" for="form-contrasena">Contraseña</label>
 						{% for error in form.password.errors %}
 						<span style="color: red">[{{ error }}]</span>
 						{%endfor%}
@@ -78,7 +78,7 @@
 						{{form.submit(class="btn btn-primary btn-lg", style="padding-left:
 						2.5rem; padding-right: 2.5rem")}}
 						<p class="small fw-bold mt-2 pt-1 mb-0">
-							No tienes una cuenta?
+							No tenés una cuenta?
 							<a href="{{url_for('register')}}" class="link-danger"
 								>Registrate</a
 							>
