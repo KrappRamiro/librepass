@@ -116,6 +116,13 @@ def see_accesses():
     accesses = Access.query.all()
     return render_template('see_accesses.html', title="Lista de Accessos", accesses=accesses)
 
+@app.route('/see_employee_accesses/<string:dni>')
+@login_required
+def see_employee(dni):
+    employee = Employee.query.filter_by(dni=dni).first()
+    accesses = Access.query.filter_by(employee = employee).all()
+    return render_template('see_employee_accesses.html', employee = employee, accesses = accesses)
+
 #----------------- Delete urls ------------------#
 
 

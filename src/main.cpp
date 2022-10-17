@@ -95,50 +95,6 @@ void loop()
 	oled.clearDisplay();
 	displayMenu();
 
-	/*
-	// draw a circle
-	oled.clearDisplay();
-	oled.drawCircle(20, 35, 20, WHITE);
-	oled.display();
-	delay(1000);
-
-	// draw a triangle
-	oled.clearDisplay();
-	oled.drawTriangle(30, 15, 0, 60, 60, 60, WHITE);
-	oled.display();
-	delay(1000);
-
-	// fill a triangle
-	oled.clearDisplay();
-	oled.fillTriangle(30, 15, 0, 60, 60, 60, WHITE);
-	oled.display();
-	delay(1000);
-
-	// draw a rectangle
-	oled.clearDisplay();
-	oled.drawRect(0, 15, 60, 40, WHITE);
-	oled.display();
-	delay(1000);
-
-	// fill a rectangle
-	oled.clearDisplay();
-	oled.fillRect(0, 15, 60, 40, WHITE);
-	oled.display();
-	delay(1000);
-
-	// draw a round rectangle
-	oled.clearDisplay();
-	oled.drawRoundRect(0, 15, 60, 40, 8, WHITE);
-	oled.display();
-	delay(1000);
-
-	// fill a round rectangle
-	oled.clearDisplay();
-	oled.fillRoundRect(0, 15, 60, 40, 8, WHITE);
-	oled.display();
-	delay(1000);
-	*/
-
 	if (!mfrc522.PICC_IsNewCardPresent()) { // Se espera a que se acerque un tag
 		return;
 	}
