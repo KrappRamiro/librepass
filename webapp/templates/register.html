@@ -1,36 +1,101 @@
 {%extends "base.html"%} {%block content%}
-<h1>Crea tu cuenta</h1>
-<form action="" method="post">
-	{{form.hidden_tag()}}
-	<p>
-		{{ form.username.label}} <br />
-		{{ form.username(size=32)}} <br />
-		{%for error in form.username.errors%}
-		<span style="color: red">[{{error}}]</span>
-		{%endfor%}
-	</p>
+<style>
+	.divider:after,
+	.divider:before {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: #eee;
+	}
+	.h-custom {
+		height: calc(100% - 73px);
+	}
+	@media (max-width: 450px) {
+		.h-custom {
+			height: 100%;
+		}
+	}
+</style>
+<section>
+	<div class="container-fluid h-custom">
+		<div class="row d-flex justify-content-center align-items-center h-100">
+			<div class="col-md-9 col-lg-6 col-xl-5">
+				<img
+					src="/static/images/logo_largo_con_texto.png"
+					class="img-fluid"
+					alt="Imagen con logo"
+				/>
+			</div>
+			<div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+				<form action="" method="POST">
+					<!--
+					The action attribute of the form is used to tell the browser the URL that should be used when submitting the information the user entered in the form.
+					When the action is set to an empty string the form is submitted to the URL that is currently in the address bar
 
-	<p>
-		{{form.email.label}} <br />
-		{{form.email(size=64)}} <br />
-		{% for error in form.email.errors%}
-		<span style="color: red">[{{error}}]</span>
-		{%endfor%}
-	</p>
-	<p>
-		{{ form.password.label }}<br />
-		{{ form.password(size=32) }}<br />
-		{% for error in form.password.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{% endfor %}
-	</p>
-	<p>
-		{{ form.password2.label }}<br />
-		{{ form.password2(size=32) }}<br />
-		{% for error in form.password2.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{% endfor %}
-	</p>
-	<p>{{form.submit()}}</p>
-</form>
-{%endblock%}
+					En resumen, cuando action tiene un valor, hace lo que esta en action
+					Si no tiene un valor, x default manda ese form a la URL donde estas
+					-->
+					{{form.hidden_tag()}}
+
+					<div class="divider d-flex align-items-center my-4">
+						<p class="text-center fw-bold mx-3 mb-0">Registrate</p>
+					</div>
+
+					<!-- Username input -->
+					<div class="form-outline mb-4 form-floating">
+						{{form.username( type="text", id="form-usuario", class="form-control
+						form-control-lg", placeholder="Ingresa tu usuario" )}}
+						<label class="form-label" for="form-usuario">Usuario</label>
+						{% for error in form.username.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<!-- email input -->
+					<div class="form-outline mb-4 form-floating">
+						{{form.email( type="text", id="form-email", class="form-control
+						form-control-lg", placeholder="Ingresa tu email" )}}
+						<label class="form-label" for="form-email">Email</label>
+						{% for error in form.email.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<!-- Password input -->
+					<div class="form-outline form-floating mb-3">
+						{{form.password( type="password", id="form-contrasena",
+						class="form-control form-control-lg", placeholder="Ingresa tu
+						contraseña" )}}
+						<label class="form-label" for="form-contrasena">Contraseña</label>
+						{% for error in form.password.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<!-- Retype Password input -->
+					<div class="form-outline form-floating mb-3">
+						{{form.password2( type="password", id="form-contrasena-2",
+						class="form-control form-control-lg", placeholder="Confirma tu Contrasñea" )}}
+						<label class="form-label" for="form-contrasena-2">Confirmar Contraseña</label>
+						{% for error in form.password2.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<div class="text-center text-lg-start mt-4 pt-2">
+						{{form.submit(class="btn btn-primary btn-lg", style="padding-left:
+						2.5rem; padding-right: 2.5rem")}}
+						<p class="small fw-bold mt-2 pt-1 mb-0">
+							Ya tenés una cuenta?
+							<a href="{{url_for('login')}}" class="link-danger"
+								>Ingresá</a
+							>
+						</p>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% endblock %}

@@ -1,35 +1,93 @@
 {%extends "base.html"%} {%block content%}
 
-<h1>Inicio de Sesion</h1>
-<form action="" method="POST">
-	<!--
-		The action attribute of the form is used to tell the browser the URL that should be used when submitting the information the user entered in the form.
-		When the action is set to an empty string the form is submitted to the URL that is currently in the address bar
+<style>
+	.divider:after,
+	.divider:before {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: #eee;
+	}
+	.h-custom {
+		height: calc(100% - 73px);
+	}
+	@media (max-width: 450px) {
+		.h-custom {
+			height: 100%;
+		}
+	}
+</style>
+<section>
+	<div class="container-fluid h-custom">
+		<div class="row d-flex justify-content-center align-items-center h-100">
+			<div class="col-md-9 col-lg-6 col-xl-5">
+				<img
+					src="/static/images/logo_largo_con_texto.png"
+					class="img-fluid"
+					alt="Imagen con logo"
+				/>
+			</div>
+			<div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+				<form action="" method="POST">
+					<!--
+					The action attribute of the form is used to tell the browser the URL that should be used when submitting the information the user entered in the form.
+					When the action is set to an empty string the form is submitted to the URL that is currently in the address bar
 
-		En resumen, cuando action tiene un valor, hace lo que esta en action
-		Si no tiene un valor, x default manda ese form a la URL donde estas
-	-->
-	{{form.hidden_tag()}}
-	<p>
-		Nuevo usuario?
-		<a href="{{ url_for('register') }}">Registrate!</a>
-	</p>
-	<p>
-		{{ form.username.label }} <br />
-		{{ form.username(size=32) }} <br />
-		{% for error in form.username.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{%endfor%}
-	</p>
-	<p>
-		{{ form.password.label }} <br />
-		{{ form.password(size=32) }} <br />
-		{% for error in form.password.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{%endfor%}
-	</p>
+					En resumen, cuando action tiene un valor, hace lo que esta en action
+					Si no tiene un valor, x default manda ese form a la URL donde estas
+					-->
+					{{form.hidden_tag()}}
 
-	<p>{{ form.remember_me() }} {{ form.remember_me.label() }}</p>
-	<p>{{ form.submit() }}</p>
-</form>
+					<div class="divider d-flex align-items-center my-4">
+						<p class="text-center fw-bold mx-3 mb-0">Inicia Sesion</p>
+					</div>
+
+					<!-- Username input -->
+					<div class="form-outline mb-4 form-floating">
+						{{form.username( type="text", id="form-usuario", class="form-control
+						form-control-lg", placeholder="Ingresa tu usuario" )}}
+						<label class="form-label" for="form-usuario">Usuario</label>
+						{% for error in form.username.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<!-- Password input -->
+					<div class="form-outline form-floating mb-3">
+						{{form.password( type="password", id="form-contrasena",
+						class="form-control form-control-lg", placeholder="Ingresa tu
+						contraseña" )}}
+						<label class="form-label" for="form-contrasena">Contraseña</label>
+						{% for error in form.password.errors %}
+						<span style="color: red">[{{ error }}]</span>
+						{%endfor%}
+					</div>
+
+					<div class="d-flex justify-content-between align-items-center">
+						<!-- Remember me Checkbox -->
+						<div class="form-check mb-0">
+							{{form.remember_me( class="form-check-input me-2",
+							type="checkbox", value="", id="form-remember_me" )}}
+							<label class="form-check-label" for="form-remember_me">
+								Recuerdame
+							</label>
+						</div>
+					</div>
+
+					<div class="text-center text-lg-start mt-4 pt-2">
+						{{form.submit(class="btn btn-primary btn-lg", style="padding-left:
+						2.5rem; padding-right: 2.5rem")}}
+						<p class="small fw-bold mt-2 pt-1 mb-0">
+							No tenés una cuenta?
+							<a href="{{url_for('register')}}" class="link-danger"
+								>Registrate</a
+							>
+						</p>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+
 {% endblock %}

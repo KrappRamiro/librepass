@@ -1,14 +1,36 @@
 {%extends "base.html"%} {%block content %}
-	{% if current_user.is_anonymous %}
-	<h1>Bienvenido</h1>
-	Para comenzar a usar el sistema,
-	<a href="{{url_for('login')}}">inicia sesión</a>
-	<br />
-	Si no tienes una cuenta,
-	<a href="{{url_for('register')}}">registrate</a>
-	{%else%}
-	<h1>Hola {{current_user.username}}, cómo estas?</h1>
-	Usa la barra de navegación superior para navegar entre las distintas funciones
-	del sistema. {%endif%}
-	<br />
-{%endblock%}
+<!-- Hero -->
+<div class="px-4 my-5 text-center">
+	<h1 class="display-4 fw-bolder ">Librepass</h1>
+	<div class="col-lg-6 mx-auto">
+		<p class="lead mb-4">
+			Un novedoso sistema de seguridad electrónica creado usando tecnologías web
+			en la nube
+		</p>
+		{% if current_user.is_anonymous %}
+		<div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+			<a href="{{url_for('login')}}">
+				<button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
+					Ingresa
+				</button>
+			</a>
+			<a href={{url_for('register')}}>
+
+				<button type="button" class="btn btn-outline-secondary btn-lg px-4">
+					Registrate
+				</button>
+			</a>
+		</div>
+		{%endif%}
+	</div>
+	<div class="container px-2 ">
+		<img
+			src="/static/images/hero.png"
+			class="rounded-5 shadow-lg mb-4 img-fluid"
+			alt="Example image"
+			loading="lazy"
+			height="300"
+		/>
+	</div>
+	{%endblock%}
+</div>
