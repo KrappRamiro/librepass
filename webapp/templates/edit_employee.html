@@ -1,37 +1,35 @@
 {% extends "base.html" %} {% block content %}
-<div class="container-fluid">
-	<h1>Editar Empleado</h1>
-	<form action="" method="post">
-		{{ form.hidden_tag() }}
-		<p>
-			{{ form.name.label }}<br />
-			{{ form.name(size=32) }}<br />
-			{% for error in form.name.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{% endfor %}
-		</p>
-		<p>
-			{{ form.dni.label }}<br />
-			{{ form.dni(size=32) }}<br />
-			{% for error in form.dni.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{% endfor %}
-		</p>
-		<p>
-			{{ form.access_level.label }}<br />
-			{{ form.access_level(size=32) }}<br />
-			{% for error in form.access_level.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{% endfor %}
-		</p>
-		<p>
-			{{ form.rfid.label }}<br />
-			{{ form.rfid(size=32) }}<br />
-			{% for error in form.rfid.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{% endfor %}
-		</p>
-		<p>{{ form.submit() }}</p>
-	</form>
-</div>
+<h1>Editar Empleado</h1>
+<form action="" method="post">
+	{{ form.hidden_tag() }}
+	<p>
+		{{ form.name.label }}<br />
+		{{ form.name(size=32) }}<br />
+		{% for error in form.name.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.dni.label }}<br />
+		{{ form.dni(size=32) }}<br />
+		{% for error in form.dni.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.access_level.label }}<br />
+		{{ form.access_level(size=32) }}<br />
+		{% for error in form.access_level.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>
+		{{ form.rfid.label }}<br />
+		{{ form.rfid(size=32) }}<br />
+		{% for error in form.rfid.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{% endfor %}
+	</p>
+	<p>{{ form.submit() }}</p>
+</form>
 {% endblock %}

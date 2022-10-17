@@ -1,37 +1,35 @@
 {%extends "base.html"%} {%block content%}
 
-<div class="container-fluid">
-	<h1>Inicio de Sesion</h1>
-	<form action="" method="POST">
-		<!--
+<h1>Inicio de Sesion</h1>
+<form action="" method="POST">
+	<!--
 		The action attribute of the form is used to tell the browser the URL that should be used when submitting the information the user entered in the form.
 		When the action is set to an empty string the form is submitted to the URL that is currently in the address bar
 
 		En resumen, cuando action tiene un valor, hace lo que esta en action
 		Si no tiene un valor, x default manda ese form a la URL donde estas
 	-->
-		{{form.hidden_tag()}}
-		<p>
-			Nuevo usuario?
-			<a href="{{ url_for('register') }}">Registrate!</a>
-		</p>
-		<p>
-			{{ form.username.label }} <br />
-			{{ form.username(size=32) }} <br />
-			{% for error in form.username.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{%endfor%}
-		</p>
-		<p>
-			{{ form.password.label }} <br />
-			{{ form.password(size=32) }} <br />
-			{% for error in form.password.errors %}
-			<span style="color: red">[{{ error }}]</span>
-			{%endfor%}
-		</p>
+	{{form.hidden_tag()}}
+	<p>
+		Nuevo usuario?
+		<a href="{{ url_for('register') }}">Registrate!</a>
+	</p>
+	<p>
+		{{ form.username.label }} <br />
+		{{ form.username(size=32) }} <br />
+		{% for error in form.username.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{%endfor%}
+	</p>
+	<p>
+		{{ form.password.label }} <br />
+		{{ form.password(size=32) }} <br />
+		{% for error in form.password.errors %}
+		<span style="color: red">[{{ error }}]</span>
+		{%endfor%}
+	</p>
 
-		<p>{{ form.remember_me() }} {{ form.remember_me.label() }}</p>
-		<p>{{ form.submit() }}</p>
-	</form>
-</div>
+	<p>{{ form.remember_me() }} {{ form.remember_me.label() }}</p>
+	<p>{{ form.submit() }}</p>
+</form>
 {% endblock %}
