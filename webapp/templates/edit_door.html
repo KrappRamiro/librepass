@@ -1,25 +1,26 @@
 {% extends "base.html" %} {% block content %}
-<h1>Editar Puerta</h1>
-<form action="" method="post">
-	{{ form.hidden_tag() }}
+<div class="container-fluid">
+	<h1>Editar Puerta</h1>
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
 
-	<p>
-		{{ form.security_level.label }}<br />
-		{{ form.security_level(size=32) }}<br />
-		{% for error in form.security_level.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{% endfor %}
-	</p>
+		<p>
+			{{ form.security_level.label }}<br />
+			{{ form.security_level(size=32) }}<br />
+			{% for error in form.security_level.errors %}
+			<span style="color: red">[{{ error }}]</span>
+			{% endfor %}
+		</p>
 
-	<p>
-		{{ form.note.label }}<br />
-		{{ form.note(size=32) }}<br />
-		{% for error in form.note.errors %}
-		<span style="color: red">[{{ error }}]</span>
-		{% endfor %}
-	</p>
+		<p>
+			{{ form.note.label }}<br />
+			{{ form.note(size=32) }}<br />
+			{% for error in form.note.errors %}
+			<span style="color: red">[{{ error }}]</span>
+			{% endfor %}
+		</p>
 
-	<p>{{ form.submit() }}</p>
-</form>
+		<p>{{ form.submit() }}</p>
+	</form>
+</div>
 {% endblock %}
-

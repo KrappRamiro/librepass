@@ -8,10 +8,10 @@ try:
 
     if Employee.query.count() == 0:
         empleados = [
-            Employee(name='Juan', dni="12678543", access_level=1, rfid="BD 31 15 2B"),
-            Employee(name='Pepe', dni="98765432", access_level=3, rfid="AC 35 71 2A"),
-            Employee(name='Agustin', dni="13666666", access_level=5, rfid="CE 8A 6A 88"),
-            Employee(name='Josesito', dni="87666555", access_level=1, rfid="AA C8 61 3C"),
+            Employee(name='Juan', dni="12678543", access_level=1, rfid="AA AA AA AA"),
+            Employee(name='Pepe', dni="98765432", access_level=3, rfid="BB BB BB BB"),
+            Employee(name='Saravia', dni="13666666", access_level=5, rfid="62 19 02 1B"),
+            Employee(name='Josesito', dni="87666555", access_level=1, rfid="63 2A 91 31"),
         ]
 
         for empleado in empleados:

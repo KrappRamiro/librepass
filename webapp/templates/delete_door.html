@@ -1,14 +1,15 @@
 {%extends 'base.html'%} {% block content%}
-<h1>
-	Estas seguro de que quieres borrar la puerta {{door.id}} con la nota "{{door.note}}"?
-</h1>
-<h2>
-	Esta accion no puede deshacerse
-</h2>
+<div class="container-fluid">
+	<h1>
+		Estas seguro de que quieres borrar la puerta {{door.id}} con la nota
+		"{{door.note}}"?
+	</h1>
+	<h2>Esta accion no puede deshacerse</h2>
 
-<form action="" method="post">
-	{{form.hidden_tag()}}
+	<form action="" method="post">
+		{{form.hidden_tag()}}
 
-	<p>{{form.submit()}}</p>
-</form>
+		<p>{{form.submit()}}</p>
+	</form>
+</div>
 {%endblock%}

@@ -2,34 +2,45 @@
 
 <div class="container-fluid">
 	<h1>Lista de todos los empleados</h1>
-	<table class="table table-bordered table-hover">
-		<thead class="table-dark">
-			<tr>
-				<th>ID</th>
-				<th>Nombre</th>
-				<th>DNI</th>
-				<th>Nivel de acceso</th>
-				<th>RFID</th>
-				<th>Acciones</th>
-			</tr>
-		</thead>
-		<tbody>
-			{%for employee in employees%}
-			<tr>
-				<td>{{employee.id}}</td>
-				<td>{{employee.name}}</td>
-				<td>{{employee.dni}}</td>
-				<td>{{employee.access_level}}</td>
-				<td>{{employee.rfid}}</td>
-				<td>
-					<div class="btn-group btn-group-sm">
-						<a class="btn btn-warning" href="/edit_employee/{{employee.id}}">Editar</a>
-						<a class="btn btn-danger" href="/delete_employee/{{employee.id}}">Borrar</a>
-					</div>
-				</td>
-			</tr>
-			{%endfor%}
-		</tbody>
-	</table>
-
+	<div class="table-responsive">
+		<table class="table table-bordered table-hover">
+			<thead class="table-dark">
+				<tr>
+					<th>ID</th>
+					<th>Nombre</th>
+					<th>DNI</th>
+					<th>Nivel de acceso</th>
+					<th>RFID</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{%for employee in employees%}
+				<tr>
+					<td>{{employee.id}}</td>
+					<td>{{employee.name}}</td>
+					<td>{{employee.dni}}</td>
+					<td>{{employee.access_level}}</td>
+					<td>{{employee.rfid}}</td>
+					<td>
+						<div class="btn-group btn-group-sm">
+							<a class="btn btn-warning" href="/edit_employee/{{employee.id}}"
+								>Editar</a
+							>
+							<a
+								class="btn btn-danger disabled"
+								href="/delete_employee/{{employee.id}}"
+								>Borrar</a
+							>
+							<a class="btn btn-primary" href="/see_employee_accesses/{{employee.dni}}"
+								>Ver accesos</a
+							>
+						</div>
+					</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+	</div>
+</div>
 {%endblock%}

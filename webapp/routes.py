@@ -1,4 +1,4 @@
-from re import A
+import logging as log
 from webapp import app
 from webapp import db
 from flask import render_template, request, jsonify, redirect, url_for, flash
@@ -10,28 +10,23 @@ from webapp.db_models import Door, User, Access, Employee
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     return render_template("index.html", title="Home page")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:  # If the current user from flask_login is authenticated
+    if current_user.is_authenticated:
         return redirect(url_for('index'))
-    # What I did here is import the LoginForm class from forms.py, instantiated an object from it, and sent it down to the template
     form = LoginForm()
-    print(f"login -- valor de form.validate: {form.validate_on_submit()}")
-    if form.validate_on_submit():  # If the form is validated
-        # Get the user with the name that was introduced in the form
+    if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        # Check if there was an User introduced or if the password was not correct
-        if user is None or not user.check_password(form.password.data):
-            # If the password was NOT correct, flash a message and redirect again to login
-            flash('Invalid username or password')
+        if user is None:
+            flash('Usuario incorrecto', category='danger')
             return redirect(url_for('login'))
-        # If the password WAS correct, login the user and redirect to index
-        # login_user also gives a value to the variable current_user
+        if user.check_password(form.password.data) == False:
+            flash('Contraseña invalida', category='danger')
+            return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         # Next page is used for redirecting to a page that has the @login_required
         # This line gets the next query from an url like:       /login?next=/index
@@ -41,7 +36,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(url_for('index'))
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Iniciar Sesion', form=form)
 
 
 @app.route('/logout')
@@ -61,7 +56,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash('Felicitaciones, ahora sos un usuario registrado!', category="success")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -79,12 +74,12 @@ def add_employee():
         )
         db.session.add(employee)
         db.session.commit()
-        flash(f'Agregado al employee {form.name.data}')
+        flash(f'Añadido al empleado {form.name.data}', category="success")
         return redirect(url_for('add_employee'))
     return render_template('add_employee.html', title='Añadir Employee', form=form)
 
 
-@app.route('/add_door/', methods=['GET', 'POST'])
+@app.route('/add_door', methods=['GET', 'POST'])
 @login_required
 def add_door():
     form = AddDoorForm()
@@ -96,7 +91,7 @@ def add_door():
         db.session.add(door)
         db.session.commit()
         flash(
-            f'Agregada la door con la note {form.note.data}, y el nivel de seguridad {form.security_level.data}')
+            f'Agregada la puerta con la nota {form.note.data}, y el nivel de seguridad {form.security_level.data}', category="success")
         return redirect(url_for('add_door'))
     return render_template('add_door.html', title='Añadir Door', form=form)
 
@@ -120,6 +115,14 @@ def see_doors():
 def see_accesses():
     accesses = Access.query.all()
     return render_template('see_accesses.html', title="Lista de Accessos", accesses=accesses)
+
+@app.route('/see_employee_accesses/<string:dni>')
+@login_required
+def see_employee(dni):
+    employee = Employee.query.filter_by(dni=dni).first()
+    accesses = Access.query.filter_by(employee = employee).all()
+    return render_template('see_employee_accesses.html', employee = employee, accesses = accesses)
+
 #----------------- Delete urls ------------------#
 
 
@@ -131,11 +134,9 @@ def delete_employee(id):
         # Borrar al employee
         db.session.delete(employee)
         db.session.commit()
-        flash(
-            f'Borrado al employee'
-        )
+        flash(f'Borrado al empleado', category="success")
         return redirect(url_for('see_employees'))
-    return render_template('delete_employee.html', title="Borrar employee", form=form, employee=employee)
+    return render_template('delete_employee.html', title="Borrar empleado", form=form, employee=employee)
 
 
 @app.route('/delete_door/<int:id>', methods=['GET', 'POST'])
@@ -146,11 +147,9 @@ def delete_door(id):
         # Borrar la door
         db.session.delete(door)
         db.session.commit()
-        flash(
-            f'Borrada la door'
-        )
+        flash(f'Borrada la puerta', category="success")
         return redirect(url_for('see_doors'))
-    return render_template('delete_door.html', title="Borrar door", form=form, door=door)
+    return render_template('delete_door.html', title="Borrar puerta", form=form, door=door)
 
 
 #----------------- Edit urls ------------------#
@@ -166,14 +165,14 @@ def edit_employee(id):
         employee_to_edit.rfid = form.rfid.data
         db.session.add(employee_to_edit)
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Los cambios han sido guardados.', category="success")
         return redirect(url_for('see_employees'))
     elif request.method == 'GET':
         form.name.data = employee_to_edit.name
         form.dni.data = employee_to_edit.dni
         form.access_level.data = employee_to_edit.access_level
         form.rfid.data = employee_to_edit.rfid
-    return render_template('edit_employee.html', title='Editar Employee',
+    return render_template('edit_employee.html', title='Editar Empleado',
                            form=form)
 
 
@@ -186,12 +185,12 @@ def edit_door(id):
         door_to_edit.note = form.note.data
         db.session.add(door_to_edit)
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Los cambios han sido guardados.', category="success")
         return redirect(url_for('see_doors'))
     elif request.method == 'GET':
         form.note.data = door_to_edit.note
         form.security_level.data = door_to_edit.security_level
-    return render_template('edit_door.html', title='Editar Door',
+    return render_template('edit_door.html', title='Editar Puerta',
                            form=form)
 
 
@@ -200,34 +199,39 @@ def edit_door(id):
 
 @app.route('/api/let_employee_pass/<string:rfid>/<int:door>')
 def get_employee(rfid, door):
+    rfid = rfid.replace('_', ' ')  # Replaces all the _ to whitespace
     employee = Employee.query.filter_by(rfid=rfid).first()
     door = Door.query.filter_by(id=door).first()
     # ------------ Inicio de checkeo de existencia de datos en la base de datos ------------------- #
     if employee == None:
-        return {
+        log.warning("Se pidio acceso con un RFID no existente")
+        return jsonify({
             'mensaje': f'El RFID {rfid} no fue encontrado en la base de datos',
             'access': False
-        }
+        }), 403
     elif door == None:
-        return {
+        log.warning("Se pidio acceso con un RFID no existente")
+        return jsonify({
             'mensaje': f'La door no fue encontrada',
             'access': False
-        }
+        }), 403
 
     # ------------ Fin de checkeo de existencia de datos en la base de datos ------------------- #
     # Si el employee NO tiene el nivel de seguridad necesario
     if (employee.access_level >= door.security_level) == False:
-        respuesta = {
-            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} NO ha sido authorized a pasar por la door {door.id}",
+        log.warning("Se pidio acceso pero no fue autorizado")
+        respuesta = jsonify({
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} NO ha sido autorizado a pasar por la door {door.id}",
             'access': False
-        }
+        }),403
         authorized = False
     # Si el employee SI tiene el nivel de seguridad necesario
     else:
-        respuesta = {
-            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} ha sido authorized a pasar por la door {door.id} con el nivel de seguridad {door.security_level}",
+        log.info("Se pidio acceso y fue autorizado")
+        respuesta = jsonify({
+            'mensaje': f"El employee {employee.name} con el nivel de access {employee.access_level} ha sido autorizado a pasar por la door {door.id} con el nivel de seguridad {door.security_level}",
             'access': True
-        }
+        }), 200
         authorized = True
     # Agregar access (permitido o denegado, cualsea) en la base de datos
     access = Access(employee=employee, door=door, authorized=authorized)
