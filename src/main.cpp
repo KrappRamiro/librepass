@@ -12,10 +12,10 @@
 #define I2C_SCL 27
 #define RELAY 2
 //------------------ INICIO DE Configuracion de conexion a internet ----------------
-const char* ssid = "TeleCentro-882b"; // Nombre de la red
-const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
-// const char* ssid = "Krapp";
-// const char* password = "thinkpad1234";
+// const char* ssid = "TeleCentro-882b"; // Nombre de la red
+// const char* password = "ZGNJVMMHZ2MY"; // Contraseña de la red
+const char* ssid = "Krapp";
+const char* password = "thinkpad1234";
 String response = ""; // String for storing server response
 DynamicJsonDocument doc(2048); // JSON document for the API
 // ----------------- FIN DE Configuracion de conexion a internet ------------------
