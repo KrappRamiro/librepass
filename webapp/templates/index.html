@@ -9,19 +9,24 @@
 		</p>
 		{% if current_user.is_anonymous %}
 		<div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-			<button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
-				Inicia Sesion
-			</button>
-			<button type="button" class="btn btn-outline-secondary btn-lg px-4">
-				Registrate
-			</button>
+			<a href="{{url_for('login')}}">
+				<button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
+					Ingresa
+				</button>
+			</a>
+			<a href={{url_for('register')}}>
+
+				<button type="button" class="btn btn-outline-secondary btn-lg px-4">
+					Registrate
+				</button>
+			</a>
 		</div>
 		{%endif%}
 	</div>
 	<div class="container px-5">
 		<img
 			src="/static/images/hero.png"
-			class="img-fluid border rounded-3 shadow-lg mb-4"
+			class="rounded-5 shadow-lg mb-4"
 			alt="Example image"
 			loading="lazy"
 			height="300"
