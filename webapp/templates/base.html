@@ -16,6 +16,10 @@
 			rel="stylesheet"
 		/>
 		<link rel="stylesheet" href="/static/css/style.css" />
+		<script
+			src="https://kit.fontawesome.com/3ec9da0d5c.js"
+			crossorigin="anonymous"
+		></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg bg-light">
@@ -93,30 +97,32 @@
 							</ul>
 						</li>
 					</ul>
-									<!-- Right side of navbar -->
-				{% if current_user.is_authenticated %}
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" href="#"
-							>Bienvenido, {{ current_user.username }}</a
-						>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesion</a>
-					</li>
-				</ul>
-				{% else %}
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('login') }}">Ingresar</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('register') }}"
-							>Registrarse</a
-						>
-					</li>
-				</ul>
-				{% endif %}
+					<!-- Right side of navbar -->
+					{% if current_user.is_authenticated %}
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" href="#"
+								>Bienvenido, {{ current_user.username }}</a
+							>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('logout') }}"
+								>Cerrar Sesion</a
+							>
+						</li>
+					</ul>
+					{% else %}
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('login') }}">Ingresar</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('register') }}"
+								>Registrarse</a
+							>
+						</li>
+					</ul>
+					{% endif %}
 				</div>
 			</div>
 		</nav>
@@ -129,81 +135,52 @@
 		</div>
 		{% endfor %} {% endif %} {% endwith %}
 
-		<!-- 
-		<nav>
-			<ul class="navbar-nav">
-				<a class="navbar-brand" href="#">
-					<img
-						src="/static/images/logo.png"
-						alt="Logo"
-						style="height: 30px; width: 30px"
-						class="rounded-pill"
-					/>
-					Librepass
+		<div class="container-fluid" style="min-height: 70vh">
+			{% block content %} {% endblock %}
+		</div>
+
+		<!-- Footer here -->
+		<div class="container">
+			<footer
+				class="d-flex flex-wrap justify-content-between align-items-center pt-3 mt-4 border-top"
+			>
+				<p class="col-md-4 mb-0 text-muted">© Krapp Ramiro 2022</p>
+
+				<a
+					href="/"
+					class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+				>
+					<img src="/static/images/logo.png" alt="logo" width="50px" />
 				</a>
-				<li class="nav-item">
-					<a class="nav-link" href="{{url_for('index')}}">Home</a>
-				</li>
-				{% if current_user.is_anonymous %}
-				<li class="nav-item">
-					<a class="nav-link" href="{{ url_for('login') }}">Login</a>
-				</li>
-				{% else %}
-				<li class="nav-item">
-					<a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-				</li>
-				{% endif %}
 
-				<li class="nav-item dropdown">
-					<a
-						class="nav-link dropdown-toggle"
-						href="#"
-						role="button"
-						data-bs-toggle="dropdown"
-						>Añadir</a
-					>
-					<ul class="dropdown-menu">
-						<li>
-							<a class="dropdown-item" href="{{url_for('add_employee')}}"
-								>Empleado</a
-							>
-						</li>
-						<li>
-							<a class="dropdown-item" href="{{url_for('add_door')}}">Puerta</a>
-						</li>
-					</ul>
-				</li>
-
-				<li class="nav-item dropdown">
-					<a
-						class="nav-link dropdown-toggle"
-						href="#"
-						role="button"
-						data-bs-toggle="dropdown"
-						>Ver</a
-					>
-					<ul class="dropdown-menu">
-						<li>
-							<a class="dropdown-item" href="{{url_for('see_employees')}}">
-								Lista de Empleados
-							</a>
-						</li>
-						<li>
-							<a class="dropdown-item" href="{{url_for('see_doors')}}">
-								Lista de Puertas
-							</a>
-						</li>
-						<li>
-							<a href="{{url_for('see_accesses')}}" class="dropdown-item">
-								Lista de Accesos
-							</a>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</nav>
-  -->
-		{% block content %} {% endblock %}
+				<ul class="nav col-md-4 justify-content-end">
+					<li class="nav-item">
+						<a href="#" class="nav-link px-2 text-muted">
+							<i class="fa-brands fa-github"></i>
+							Github
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://www.linkedin.com/in/ramiro-krapp/" class="nav-link px-2 text-muted">
+							<i class="fa-brands fa-linkedin-in"></i>
+							LinkedIn</a
+						>
+					</li>
+					<li class="nav-item">
+						<a href="https://www.instagram.com/krappramiro/" class="nav-link px-2 text-muted">
+							<i class="fa-brands fa-instagram"></i>
+							Instagram
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://drive.google.com/file/d/185BAPunYX7QazSNkDJN5cf_hZH7EiKE4/view?usp=sharing" class="nav-link px-2 text-muted">
+							<i class="fa-regular fa-id-card"></i>
+							CV</a
+						>
+					</li>
+				</ul>
+			</footer>
+		</div>
 
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"

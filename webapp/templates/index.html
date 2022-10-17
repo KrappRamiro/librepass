@@ -1,5 +1,4 @@
 {%extends "base.html"%} {%block content %}
-<div class="container-fluid">
 	{% if current_user.is_anonymous %}
 	<h1>Bienvenido</h1>
 	Para comenzar a usar el sistema,
@@ -10,5 +9,6 @@
 	{%else%}
 	<h1>Hola {{current_user.username}}, cómo estas?</h1>
 	Usa la barra de navegación superior para navegar entre las distintas funciones
-	del sistema. {%endif%} {%endblock%}
-</div>
+	del sistema. {%endif%}
+	<br />
+{%endblock%}
