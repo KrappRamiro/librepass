@@ -6,25 +6,14 @@
 \section{Introducción}
 
 Librepass es un sistema FOSS(Free and Open Source) de seguridad para empresas.
-Al ser FOSS, está hosteado en
+Al ser FOSS, su código esta publicamente accesible en
 \href{https://github.com/KrappRamiro/librepass}{un repositorio público en GitHub} ---
-{\small \url{https://github.com/KrappRamiro/librepass}}.
+{\small \url{https://github.com/KrappRamiro/librepass}}, y su uso y replicación es completamente libre y gratuito.
 
-\todo{Aca hay que cambiar varias cosas, porque agregué lo de flask, la base de datos con postgres, la API, etc...}
-
-Fue desarrollado usando una placa de desarrollo DOIT ESP32 DevKit V1, conectado
-a un array de lectores RFID-RC552.
-
-Estos lectores son capaces de leer un sistema de tarjetas y/o llaveros RFID con un
-código hexadecimal indentificador, el cual se asigna a cada empleado de la empresa, y
-sirve para identificar al empleado.
-
-A nivel de hardware, hay 3 componentes involucrados:
+Este proyecto cuenta con 2 partes principales:
 \begin{enumerate}
-	\item El microcontrolador: un ESP32
-	\item EL PCD (Proximity Coupling Device): RFID-MFRC522
-	\item El PICC (Proximity Integrated Circuit Card): Una tarjeta o llavero usando
-	      la interfaz ISO 14443A
+	\item Un equipo de control de acceso, que se instala individualmente en cada puerta
+	\item Un sistema en la nube para gestionar los equipos y los empleados, ademas de poder ver los accesos.
 \end{enumerate}
 
 \subsection{El proyecto y el Software Libre}
@@ -76,8 +65,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-
 }
 
 \end{document}
