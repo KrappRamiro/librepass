@@ -55,7 +55,7 @@
 	\pagestyle{fancy}
 	\setlength{\headheight}{12.17pt} %esto esta para solucionar un warning del fancyhdr
 	\rfoot{Página \thepage}
-	\cfoot{}
+	\cfoot{\includegraphics[width=0.3in]{logo}}
 	\lfoot{Krapp Ramiro}
 	\renewcommand{\sectionmark}[1]{%
 	\markboth{\thesection\quad #1}{}}
@@ -70,7 +70,7 @@
 \newcommand{\sectionbreak}{\clearpage}
 \newcommand{\subsectionbreak}{\clearpage}
 \titleformat{\section}
-	{\bfseries \Huge}
+	{\bfseries \Huge \centering}
 	{}
 	{0em}
 	{\thesection.  }[\titlerule]
@@ -106,7 +106,14 @@
 
 % ------------------ INICIO DE INDICE ------------------ %
 
-\tableofcontents		\noindent\rule{\textwidth}{0.7pt }
+{
+\titleformat{\section}
+	{\bfseries \Huge \centering}
+	{}
+	{0em}
+	{}[\titlerule]
+	\tableofcontents		\noindent\rule{\textwidth}{0.7pt }
+}
 
 El índice tiene hipervínculos incorporados!
 Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa página
@@ -116,13 +123,19 @@ Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa págin
 \subfile{subfiles/diagrama-esquematico.tex}
 \subfile{subfiles/pcb.tex}
 \subfile{subfiles/partes-proyecto.tex}
-\subfile{subfiles/codigo-programa.tex}
-\subfile{subfiles/bitacoras.tex}
+\subfile{subfiles/diseno-3d.tex}
+{
+	\subfile{subfiles/frameworks.tex}
+}
+\subfile{subfiles/protocolos-comunicacion.tex}
+%\subfile{subfiles/codigo-programa.tex}
+%\subfile{subfiles/bitacoras.tex}
 
 % Bibliografia, hace su propia \section 
-{
-	\emergencystretch=1em %esto esta aca para que una de las urls no se vaya de pantalla
-	\printbibliography
-}
+\section{Bibliografia}
+ {
+  \emergencystretch=1em %esto esta aca para que una de las urls no se vaya de pantalla
+  \printbibliography[heading=none]
+ }
 
 \end{document}

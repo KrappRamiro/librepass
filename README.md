@@ -1,4 +1,4 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<!-- Improved compatibility of volver arriba link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 
 <a name="readme-top"></a>
 
@@ -74,7 +74,9 @@
 
 </div>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Librepass es un sistema integral de control de acceso. El mismo permite controlar el acceso de los empleados a distintos sectores usando tecnología RFID. En este sistema, se tienen una unidad de acceso por cada puerta, las cuales se conectan mediante una API REST a un servidor en AWS, la cual permite o no pasar a una persona dependiendo del nivel de seguridad que tenga su tarjeta.
+
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 ### Hecho con
 
@@ -83,9 +85,10 @@
 - [![Arduino][arduino.com]][arduino-url]
 - [![Nunjucks][nunjucks.com]][nunjucks-url]
 - [![Jinja][jinja.com]][jinja-url]
-- [![AWS][aws.com]][aws-url]
+- [![AWS][aws.com]][aws-url]equipo
+- [![Postgres][postgres.com]][postgres-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- GETTING STARTED -->
 
@@ -135,7 +138,7 @@ sudo docker run --name librepass-postgres -p 5432:5432     -e POSTGRES_USER=libr
 
 6. Abre el programa en tu navegador web en <a href="http://127.0.0.1:5000"> http://127.0.0.1:5000 </a>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 
@@ -178,7 +181,7 @@ Aquí se pueden ver los datos. En la columna de acciones, se pueden realizar mul
 
 <!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- ROADMAP -->
 
@@ -194,7 +197,7 @@ Aquí se pueden ver los datos. En la columna de acciones, se pueden realizar mul
 
 Mira los [open issues](https://github.com/KrappRamiro/librepass/issues) para una lista de todas las funciones propuestas (y todos los errores conocidos)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- CONTRIBUTING -->
 
@@ -216,15 +219,15 @@ Si tenes una sugerencia que mejoraría el programa, hace un fork del repositorio
 
 5. Abrí una pull request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- LICENSE -->
 
 ## Licencia
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distribuido con la licencia MIT. Ver `LICENSE.txt` para más información
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- CONTACT -->
 
@@ -234,7 +237,7 @@ Krapp Ramiro - krappramiro@disroot.org
 
 Project Link: [https://github.com/KrappRamiro/librepass](https://github.com/KrappRamiro/librepass)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -267,7 +270,7 @@ Esa funcion esta temporalmente desactivada
 
 Para cerrar sesion, hay que tocar el boton que dice **Cerrar Sesion** arriba a la derecha
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -311,3 +314,5 @@ Para cerrar sesion, hay que tocar el boton que dice **Cerrar Sesion** arriba a l
 [jinja-url]: https://palletsprojects.com/p/jinja/
 [aws.com]: https://img.shields.io/badge/AWS-EB5F07?style=for-the-badge&logo=amazon
 [aws-url]: https://aws.amazon.com/
+[postgres.com]: https://img.shields.io/badge/PostgreSQL-e8dcdc?style=for-the-badge&logo=postgresql
+[postgres-url]: https://www.postgresql.org/

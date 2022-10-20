@@ -1,0 +1,85 @@
+\documentclass[../informe_krapp.tex]{subfiles}
+\begin{document}
+\renewcommand{\subsectionbreak}{}
+\section{Frameworks}
+Un framework es un esquema o marco de trabajo que ofrece una estructura base para elaborar un proyecto con objetivos específicos, una especie de plantilla que sirve como punto de partida para la organización y desarrollo de software. Utilizar frameworks puede simplificar (y mucho) una tarea o proceso.
+
+Generalmente, los frameworks son usados por programadores porque permiten acelerar el trabajo y favorecer que este sea colaborativo, reducir errores y obtener un resultado de más calidad
+
+Un framework sirve para acometer un proyecto en menos tiempo, y en el sector de la programación, con un código más limpio y consistente, de manera rápida y eficaz. El framework ofrece una estructura base que los programadores pueden complementar o modificar según sus objetivos.
+% -------------- ARDUINO -------------------%
+\subsection{Arduino}
+\begin{wrapfigure}{r}{0in}
+	\includegraphics[width=2in, keepaspectratio]{arduino.png}
+\end{wrapfigure}
+El framework Arduino, que provee una amplia variedad de
+clases, metodos y funciones útiles para el desarrollo en sistemas embebidos.
+Este framework se implementó a través de platformIO, una extensión de Visual Studio Code.
+En este proyecto, todo el desarrollo del ESP32 fue hecho mediante este framework.
+
+\subsubsection{Razones por las que usé Arduino}
+Use Arduino porque es un framework con el que ya estoy familiarizado, además que, gracias a la existencia de librerias como Wifi.h, HTTPClient.h, MFRC522, Wire.h, etc..., gran cantidad del desarrollo ya está hecho, y lo único que tengo que hacer es construir alrededor de esas librerías.
+
+Además, el uso de Arduino se está volviendo un estandar en la industria, ya que permite que todos los programadores sigan una misma forma de desarrollo,
+cosa que resultaba complicada en C++, el cual es un lenguaje conocido por permitir multiples formas de desarrollar una misma cosa, o dicho por el propio creador, ``multiples formas de pegarse un tiro en el pie''
+\clearpage
+
+% -------------- FLASK -------------------%
+\subsection{Flask}
+\begin{figure}[H]
+	\includegraphics[width=0.7\textwidth, keepaspectratio]{flask.png}
+	\centering
+\end{figure}
+Flask es un microwebframework usado para, como indica el nombre, crear aplicaciones webs. Este, al ser modular y escalable, tiene la posibilidad
+de permitir el agregado de ORM's (Object Relational Manager), routers, renderizador de templates, sistema de logins,
+forms, etc...
+En este proyecto, Flask se usó para el desarrollo del backend, y con la ayuda del renderizador de templates Jinja2 y Nunjucks, se templatizo el frontend.
+
+\subsubsection{Razones por las que usé Flask}
+Use Flask porque me lo aconsejó un programador conocido, ya que aprender a usarlo me iba a abrir las puertas al desarrollo backend con otros
+frameworks como Django, los cuales tienen un gran uso en el mercado laboral.
+Ademas, Flask me permite desarrollar mi programa de forma sencilla gracias a su alta modularidad
+
+
+% -------------- BOOTSTRAP -------------------%
+\subsection{Bootstrap}
+\begin{wrapfigure}{r}{0in}
+	\includegraphics[width=2in, keepaspectratio]{bootstrap.png}
+\end{wrapfigure}
+Bootstrap es el framework CSS más popular para desarrollar aplicaciones responsivas y aptas para dispositivos móviles.
+En este proyecto, se usó la versión 5 de Bootstrap para el desarrollo del frontend.
+
+Este framework cuenta con multiples clases, las cuales se usan para crear las páginas webs al gusto del programador.
+
+\subsubsection{Razones por las que usé Bootstrap}
+La principal razón por la que use bootstrap es que ya tiene componentes creados previamente, lo cual libera carga al desarrollador, y permite en concentrarse en partes más esenciales del proyecto.
+\clearpage
+
+
+% -------------- AWS -------------------%
+\subsection{Amazon Web Services (AWS)}
+\begin{wrapfigure}{r}{0in}
+	\includegraphics[width=2in, keepaspectratio]{aws.jpg}
+\end{wrapfigure}
+Amazon Web Services (AWS) es la plataforma cloud más adoptada en el mundo, con más de 200 servicios distintos.
+En este proyecto, AWS se usó para la implementación de la infrastructura de la webapp.
+Se usarón los servicios de Relational Database Service (RDS) y Elastic Beanstalk.
+
+\subsubsection{Razones por las que usé AWS}
+Hay dos razones principales por las que usé AWS: La primera razón es porque hostear un servidor físico requiere mucho tiempo y esfuerzo, además de que es \textbf{muy caro}, mientras que AWS es completamente escalable, y en tamaños chicos es realmente económico. La segunda es que en la industria ya no se está acostumbrando tanto a usar servidores físicos, sino que se están realizando muchas migraciones a servicios en la nube gracias a la comodidas que proveen.
+
+Y en el ámbito de la comodidad, su servicio ElasticBeanstalk facilita mucho el desarrollo de aplicaciones web, ya que en ningun momento tuve que configurar más que el PYTHONPATH y el WSGIPATH, y es simplemente un archivo de texto, además de acoplarle la base de datos postgreSQL
+
+% -------------- PostgreSQL -------------------%
+\subsection{PostgreSQL}
+\begin{wrapfigure}{r}{0in}
+	\includegraphics[width=2in, keepaspectratio]{postgreSQL.png}
+\end{wrapfigure}
+PostgreSQL (tambien conocido como Postgres por la comunidad) es un sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.
+
+Como muchos otros proyectos de código abierto, el desarrollo de PostgreSQL no es manejado por una empresa o persona, sino que es dirigido por una comunidad de desarrolladores que trabajan de forma desinteresada, altruista, libre o apoyados por organizaciones comerciales. Dicha comunidad es denominada el PGDG (PostgreSQL Global Development Group).
+
+\subsubsection{Razones por las que usé PostgreSQL}
+La principal razón por la que use PostgreSQL es que es un estandar en la industria moderna a la hora de hacer bases de datos SQL.
+
+\end{document}
