@@ -35,11 +35,11 @@
 
 <h1 align="center">Librepass</h1>
   <h2 align="center"> Un sistema de seguridad electrónico </h2>
-    <a href="http://librepass-env.us-east-1.elasticbeanstalk.com/">View Demo</a>
+    <a href="http://librepass-env.us-east-1.elasticbeanstalk.com/">Ver Demo</a>
     ·
-    <a href="https://github.com/KrappRamiro/librepass/issues">Report Bug</a>
+    <a href="https://github.com/KrappRamiro/librepass/issues">Reportar un bug</a>
     ·
-    <a href="https://github.com/KrappRamiro/librepass/issues">Request Feature</a>
+    <a href="https://github.com/KrappRamiro/librepass/issues">Pedir una función</a>
 		<br>
 		<br>
 </div>
