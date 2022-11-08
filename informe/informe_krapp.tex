@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[twoside]{article}
 
 % ----------------------- PAQUETES ---------------------- %
 % Set the font (output) encodings
@@ -103,11 +103,11 @@
 \begin{document}
 
 \subfile{subfiles/portada.tex}
-
+\shipout\null
 % ------------------ INICIO DE INDICE ------------------ %
 
 {
-\titleformat{\section}
+	\titleformat{\section}
 	{\bfseries \Huge \centering}
 	{}
 	{0em}
@@ -117,6 +117,11 @@
 
 El índice tiene hipervínculos incorporados!
 Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa página
+
+\clearpage
+\shipout\null
+\clearpage
+
 % ------------------ FIN DE INDICE ------------------- %
 \subfile{subfiles/introduccion.tex}
 \subfile{subfiles/diagrama-bloques.tex}
@@ -127,7 +132,10 @@ Toca en cada seccion y automaticamente tu lector de pdfs te llevara a esa págin
 {
 	\subfile{subfiles/frameworks.tex}
 }
-\subfile{subfiles/protocolos-comunicacion.tex}
+{
+	\renewcommand{\subsectionbreak}{}
+	\subfile{subfiles/protocolos-comunicacion.tex}
+}
 %\subfile{subfiles/codigo-programa.tex}
 %\subfile{subfiles/bitacoras.tex}
 
