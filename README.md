@@ -47,22 +47,22 @@
 <!-- TABLE OF CONTENTS -->
 
 - [Acerca del Proyecto](#acerca-del-proyecto)
-	- [Hecho con](#hecho-con)
+  - [Hecho con](#hecho-con)
 - [Antes de Arrancar](#antes-de-arrancar)
-	- [Prerequisitos](#prerequisitos)
-	- [Instalación](#instalación)
+  - [Prerequisitos](#prerequisitos)
+  - [Instalación](#instalación)
 - [Uso](#uso)
-	- [Creacion de cuenta e inicio de sesion](#creacion-de-cuenta-e-inicio-de-sesion)
-	- [Añadido de empleados y puertas](#añadido-de-empleados-y-puertas)
-	- [Visualización de datos](#visualización-de-datos)
+  - [Creacion de cuenta e inicio de sesion](#creacion-de-cuenta-e-inicio-de-sesion)
+  - [Añadido de empleados y puertas](#añadido-de-empleados-y-puertas)
+  - [Visualización de datos](#visualización-de-datos)
 - [Tareas a futuro](#tareas-a-futuro)
 - [Contribuir](#contribuir)
 - [Licencia](#licencia)
 - [Contacto](#contacto)
 - [FAQ](#faq)
-	- [OperationalError Al correr el programa](#operationalerror-al-correr-el-programa)
-	- [No puedo borrar empleados y puertas](#no-puedo-borrar-empleados-y-puertas)
-	- [Como cerrar sesión](#como-cerrar-sesión)
+  - [OperationalError Al correr el programa](#operationalerror-al-correr-el-programa)
+  - [No puedo borrar empleados y puertas](#no-puedo-borrar-empleados-y-puertas)
+  - [Como cerrar sesión](#como-cerrar-sesión)
 
 <!-- ABOUT THE PROJECT -->
 
@@ -74,7 +74,13 @@
 
 </div>
 
-Librepass es un sistema integral de control de acceso. El mismo permite controlar el acceso de los empleados a distintos sectores usando tecnología RFID. En este sistema, se tienen una unidad de acceso por cada puerta, las cuales se conectan mediante una API REST a un servidor en AWS, la cual permite o no pasar a una persona dependiendo del nivel de seguridad que tenga su tarjeta.
+Librepass es un sistema integral de control de acceso hecho con ESP32 y tecnologias web en la nube.
+El mismo permite controlar el acceso de los empleados a distintos sectores usando tecnología RFID.
+
+En este sistema, se tiene una unidad de acceso por cada puerta, la cual tiene un lector RFID conectado a un ESP32. Este lee cuando se apoya una tarjeta RFID, y deja pasar a los usuarios que esten autorizados, y rechazan a los que no esten autorizados.
+Esta autorización es independiente por puerta, y se hace consultando a un backend en Flask que esta corriendo el AWS IOT.
+
+Librepass cuenta tambien con un frontend hecho en Bootstrap apto para dispositivos desktop y mobile, el cual permite a un administrador modificar los permisos de acceso de cada puerta, y ver un historial general y especifico de los accesos.
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
