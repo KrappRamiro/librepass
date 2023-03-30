@@ -85,7 +85,7 @@ Librepass es un sistema integral de control de acceso. El mismo permite controla
 - [![Arduino][arduino.com]][arduino-url]
 - [![Nunjucks][nunjucks.com]][nunjucks-url]
 - [![Jinja][jinja.com]][jinja-url]
-- [![AWS][aws.com]][aws-url]equipo
+- [![AWS][aws.com]][aws-url]
 - [![Postgres][postgres.com]][postgres-url]
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
@@ -188,9 +188,9 @@ Aquí se pueden ver los datos. En la columna de acciones, se pueden realizar mul
 ## Tareas a futuro
 
 - [x] Agregar un footer
-- [ ] Agregar una página para ver todos los accesos de una puerta en específico
+- [x] Agregar una página para ver todos los accesos de una puerta en específico
   - [ ] A esa página, agregarle un contador (lo mismo para la de Empleados)
-- [ ] Reformar la interfaz de agregado de empleados y puertas
+- [x] Reformar la interfaz de agregado de empleados y puertas
 - [ ] Agregar un modo oscuro
 - [ ] Poder ordenar las variables de las tablas de mayor a menor
 - [ ] Poder setear la zona horaria
